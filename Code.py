@@ -448,7 +448,7 @@ orig_input_variables_cont=['AdmitTemperature','BirthHeadCircumference','AdmitBlo
 'gestation_days','Birthweight','AdmitHeadCircumference','CordArterialpH','CordVenouspH','VentilationDays','CPAPDays','MembranerupturedDuration','OxygenDays','CordClampingTimeSecond',
 'CordClampingTimeMinute','ParenteralNutritionDays','ICCareDays2011']#,'HDCareDays2011','SCCareDays2011','NormalCareDays2011'
 
-input_variables_cat=['EpisodeNumber',
+new_input_variables_cat=['EpisodeNumber',#can adjust these if needed
 'Readmission',
 'BirthOrder',
 'ResusSurfactant',
@@ -466,9 +466,19 @@ input_variables_cat=['EpisodeNumber',
 'ProblemsMedicalMother','Resuscitation','DrugsAbusedMother','DrugsInLabour','LabourPresentation',
 'Sex','MaritalStatusMother','BloodGroupMother','GPPostCode']
 
-input_variables_cont=['AdmitTemperature','BirthHeadCircumference','AdmitBloodGlucose',
+new_input_variables_cont=['AdmitTemperature','BirthHeadCircumference','AdmitBloodGlucose',
 'gestation_days','Birthweight','AdmitHeadCircumference','CordArterialpH','CordVenouspH','MembranerupturedDuration','CordClampingTimeSecond',
 'CordClampingTimeMinute','ICCareDays2011']#,'HDCareDays2011','SCCareDays2011','NormalCareDays2011'
+
+orig=0#set to 1 if you want the input vars used in teh bapm paper
+
+#in order to more easily adjust input variables of model. Remmeber to change saved model 
+if orig==1:
+    input_variables_cat=orig_input_variables_cat
+    input_variables_cont=orig_input_variables_cont
+else:
+    input_variables_cat=new_input_variables_cat
+    input_variables_cont=new_input_variables_cont
 
 
 output_variables=['duration_of_stay']
