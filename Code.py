@@ -293,24 +293,24 @@ def predict_data(X_test,model):
     #print(yhat)
     return(yhat)
 
-# Define the neural network with 5 ReLU layers 
-class UnsupervisedModel(nn.Module): 
-    def __init__(self, input_size):
-         super(UnsupervisedModel, self).__init__() 
-         self.layer1 = nn.Linear(input_size, 128) 
-         self.layer2 = nn.Linear(128, 256) 
-         self.layer3 = nn.Linear(256, 128) 
-         self.layer4 = nn.Linear(128, 64) 
-         self.layer5 = nn.Linear(64, 1) 
-         self.relu = nn.ReLU() 
-    
-    def forward(self, x):
-        x = self.relu(self.layer1(x))
-        x = self.relu(self.layer2(x))
-        x = self.relu(self.layer3(x))
-        x = self.relu(self.layer4(x))
-        x = self.layer5(x) # Output layer without activation because we're predicting a continuous variable 
-        return x
+# Define the nn training loop
+def training_loop(n_epochs,lr,optimizer,model,loss_fn,X_train,X_val,y_train,y_val):
+    for epoch in range(1,n_epochs+1):
+        y_pred_train=model(X_train)
+        loss_train=loss_fn(y_pred_train,y_train)
+        y_pred_val=model(X_val)
+        loss_val=loss_fn(y_pred_val,y_val)
+        optimizer.zero_grad()
+        loss_train.backward()
+        optimizer.step()
+        if epoch==1 or epoch % 100 ==0:
+            print(f"Epoch {epoch} , Training loss {loss_train.item():.4f}")
+        
+ 
+ 
+
+
+
 
 today = datetime.today()
 
@@ -775,9 +775,10 @@ if rand_forest==True:
         #    file.write('The'+ str(i) +'most important variable is '+full_var_list[idx] +'with a mean of '+str(r['importances_mean'][idx])+' and sd '+str(r['importances_std'][idx])+'\n')
     
 if neural_net==True:
-    print('Now training the model')
+    print('Now training the nn model')
     input_size = X.shape[1]
     case_num=X.shape[0]
+    print(input_size,'input_size')
     # Data preprocessing - standardizing the continuous features
     print('scaling and masking cont vars')
     continuous_mask = [True if i < cont_d else False for i in range(input_size)] # mask the continuous variables 
@@ -787,44 +788,34 @@ if neural_net==True:
     # Splitting the data
     print('splitting data')
     X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
-    #print(X_train)
-    X_train=torch.tensor(X_train)
-    X_val=torch.tensor(X_val)
-    y_train=torch.tensor(y_train)
-    y_val=torch.tensor(y_val)
+    print(X_train)
+    X_train=torch.tensor(X_train.float())
+    X_val=torch.tensor(X_val.float())
+    y_train=torch.tensor(y_train.float())
+    y_val=torch.tensor(y_val.float())
+    print(X_train,'data type')
+
+    #create a sequential model
+    seq_model=nn.Sequential(nn.Linear(input_size, 128),
+                            nn.Linear(128, 256),
+                            nn.Linear(256, 128),
+                            nn.Linear(128, 64),
+                            nn.Linear(64, 1),
+                            nn.ReLU() )
 
 
     # Hyperparameters
 
-    learning_rate = 0.001
-    num_epochs = 100
-    model = UnsupervisedModel(input_size)
-    criterion = nn.MSELoss() # Loss function for continuous output 
-    optimizer = optim.Adam(model.parameters(),lr=learning_rate)
+    lr = 0.001
+    n_epochs = 1000
+    model = seq_model(input_size)
+    loss_fn = nn.MSELoss() # Loss function for continuous output 
+    optimizer = optim.Adam(model.parameters(),lr)
 
 
     # Training the model 
     print('training epochs')
-    loss_vals=[]
-    epoch_vals=[]
-    model_val=[]
-    true_val=[]
-    for epoch in range(num_epochs):
-        print('training epoch', epoch)
-        model.train()
-        optimizer.zero_grad()
-        # Forward pass
-        outputs = model(X_train)
-        loss = criterion(outputs, y_train) 
-        # Backward pass and optimization
-        loss.backward()
-        optimizer.step() 
-        # Validation
-        model.eval()
-        with torch.no_grad():
-            val_outputs = model(X_val)
-            val_loss = criterion(val_outputs, y_val) 
-        print(f"Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item():.4f}, Val Loss: {val_loss.item():.4f}")
+    training_loop(n_epochs,lr,optimizer,model,loss_fn,X_train,X_val,y_train,y_val)
         
     print("Training complete.")
 
@@ -833,7 +824,7 @@ if neural_net==True:
 
 
     # Load the model
-    loaded_model = UnsupervisedModel(input_size)
+    loaded_model = seq_model(input_size)
     loaded_model.load_state_dict(torch.load('model.pth'))
     loaded_model.eval() 
 
