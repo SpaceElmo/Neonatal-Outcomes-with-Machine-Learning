@@ -137,7 +137,7 @@ input_variables_cat=['EpisodeNumber',
 'SteroidsName','OffensiveLiquor',
 'CordClamping','SteroidsAntenatalGiven','AdmitPrincipalReason','BirthOrder','ProblemsPregnancyMother',
 'ProblemsMedicalMother','Resuscitation','DrugsAbusedMother','DrugsInLabour','LabourPresentation','DischargeFeeding','DischargeMilk',
-'DrugsDuringStay','Sex','HeadScanFirstResult','HeadScanLastResult','MaritalStatusMother','BloodGroupMother','GPPostCode']
+'DrugsDuringStay','Sex','HeadScanFirstResult','HeadScanLastResult','MaritalStatusMother','BloodGroupMother','GPPostCode']#actual variables used. Could extract this into a text file if
 
 input_variables_cont=['AdmitTemperature','BirthHeadCircumference','AdmitBloodGlucose',
 'gestation_days','Birthweight','AdmitHeadCircumference','CordArterialpH','CordVenouspH','VentilationDays','CPAPDays','MembranerupturedDuration','OxygenDays','CordClampingTimeSecond',
@@ -159,20 +159,6 @@ for key in data[0].keys():
         remainder.add(key)
 
 print('Applying exclusion criteria')
-exclude_list=set()
-exclude_crit=['3','17','99']#,death or repatriation
-for i,case in enumerate(data):
-    for crit in exclude_crit:
-        if case['DischargeDestination']==crit:
-            exclude_HN=case['NationalIDBabyAnon']
-            #print(exclude_HN)
-            exclude_list.add(exclude_HN)
-
-
-for i,exclude in enumerate(exclude_list):#Now remove excluded cases from data
-    for j,case in enumerate(data):
-        if exclude==case['NationalIDBabyAnon']:
-            del data[j]
 
 
 exclude_gest=['22','23','24','25','26','36','37','38','39','40']#exclude all episodes of these birth gestation
@@ -183,24 +169,6 @@ for i,case in enumerate(data):
             del data[i]
 
 
-remove_eps=['10','11','12','13','14','15','16','2']#episode where discharge was to other hospital or to the ward. Preserves the readmission
-for i,case in enumerate(data):
-    for crit in remove_eps:
-        if case['DischargeDestination']==crit:
-            del data[i]
-
-max_stay=float(100)#exclude cases that have a min or max stay
-min_stay=float(1) 
-for i,case in enumerate(data):
-    duration=noml.days_difference(case['BirthTimeBaby'],case['DischTime'])
-    #print(duration)
-    if duration is None:
-        del data[i]
-        continue
-    elif float(duration)>max_stay:
-        del data[i]
-    elif float(duration)<=min_stay:
-        del data[i]
 
 readmission_list=set()
 for i,case in enumerate(data):
@@ -266,11 +234,14 @@ for variable in string_variables:
     clean_data_dict.update({variable:str_vals})
 
 duration_list=[]
+Birthtime_list=[]
 for i,time in enumerate(data_dict['BirthTimeBaby']):
     duration=noml.days_difference(time,data_dict['DischTime'][i])#Note that this is defined from birth to discharge, not admission. Later episodes will not depend on admission time
     duration_list.append(duration)
+    Birthtime_list.append(time)
 clean_duration=noml.convert_to_float(duration_list)    
 clean_data_dict.update({'duration_of_stay':clean_duration})
+clean_data_dict.update({'Birth_time':Birthtime_list})
 
 #print(clean_data_dict['duration_of_stay'])
 gestation_days=clean_data_dict['GestationWeeks']*7+clean_data_dict['GestationDays']
@@ -358,4 +329,10 @@ print('length of the input var list labels',len(full_var_list))
 model_name='random_forest_model.joblib'
 loaded_model=joblib.load(model_name)
 y_predict=noml.predict_data(X,loaded_model)
-y_predict=[math.ceil(num) for num in y_predict]
+days_predict=[]
+for num in y_predict:
+    val=math.ceil(num)
+    days_predict.append(val)
+
+
+
