@@ -9,7 +9,7 @@ import random as rand
 import matplotlib.pyplot as plt
 from matplotlib import cm 
 import csv
-from datetime import datetime
+from datetime import datetime,timedelta
 import Code as noml
 
 #-------Variables------------------------------------------------------------------------------------------------
@@ -117,7 +117,7 @@ string_variables=['Sex','BadgerUniqueID','NationalIDBabyAnon','HeadScanFirstResu
 
 new_variables=['duration_of_stay','gestation_days']
 
-input_variables_cat=['EpisodeNumber',
+orig_input_variables_cat=['EpisodeNumber',#these are the variables used for yje poster but they contain paameters that can only be known at discharge. 
 'Readmission',
 'BirthOrder',
 'DischargeDestination',
@@ -137,11 +137,43 @@ input_variables_cat=['EpisodeNumber',
 'SteroidsName','OffensiveLiquor',
 'CordClamping','SteroidsAntenatalGiven','AdmitPrincipalReason','BirthOrder','ProblemsPregnancyMother',
 'ProblemsMedicalMother','Resuscitation','DrugsAbusedMother','DrugsInLabour','LabourPresentation','DischargeFeeding','DischargeMilk',
-'DrugsDuringStay','Sex','HeadScanFirstResult','HeadScanLastResult','MaritalStatusMother','BloodGroupMother','GPPostCode']#actual variables used. Could extract this into a text file if
+'DrugsDuringStay','Sex','HeadScanFirstResult','HeadScanLastResult','MaritalStatusMother','BloodGroupMother','GPPostCode']
 
-input_variables_cont=['AdmitTemperature','BirthHeadCircumference','AdmitBloodGlucose',
+orig_input_variables_cont=['AdmitTemperature','BirthHeadCircumference','AdmitBloodGlucose',
 'gestation_days','Birthweight','AdmitHeadCircumference','CordArterialpH','CordVenouspH','VentilationDays','CPAPDays','MembranerupturedDuration','OxygenDays','CordClampingTimeSecond',
 'CordClampingTimeMinute','ParenteralNutritionDays','ICCareDays2011']#,'HDCareDays2011','SCCareDays2011','NormalCareDays2011'
+
+new_input_variables_cat=['EpisodeNumber',#can adjust these if needed
+'Readmission',
+'BirthOrder',
+'ResusSurfactant',
+'SteroidsAntenatalCourses',
+'DiabetesMother',
+'SmokingMother',
+'AlcoholMother',
+'Apgar1', 
+'Apgar5', 
+'LabourDelivery',
+'MaternalPyrexiaInLabour38c',
+'HIEGrade','MeconiumStainedLiquor','LabourOnset',
+'SteroidsName','OffensiveLiquor',
+'CordClamping','SteroidsAntenatalGiven','AdmitPrincipalReason','BirthOrder','ProblemsPregnancyMother',
+'ProblemsMedicalMother','Resuscitation','DrugsAbusedMother','DrugsInLabour','LabourPresentation',
+'Sex','MaritalStatusMother','BloodGroupMother','GPPostCode']
+
+new_input_variables_cont=['AdmitTemperature','BirthHeadCircumference','AdmitBloodGlucose',
+'gestation_days','Birthweight','AdmitHeadCircumference','CordArterialpH','CordVenouspH','MembranerupturedDuration','CordClampingTimeSecond',
+'CordClampingTimeMinute','ICCareDays2011']#,'HDCareDays2011','SCCareDays2011','NormalCareDays2011'
+
+orig=0#set to 1 if you want the input vars used in teh bapm paper
+
+#in order to more easily adjust input variables of model. Remmeber to change saved model 
+if orig==1:
+    input_variables_cat=orig_input_variables_cat
+    input_variables_cont=orig_input_variables_cont
+else:
+    input_variables_cat=new_input_variables_cat
+    input_variables_cont=new_input_variables_cont
 
 output_variables=['duration_of_stay']
 
@@ -325,14 +357,20 @@ for variable in (input_variables_cat):
         full_var_list.append(variable)
 print('length of the input var list labels',len(full_var_list))
 
-'''Now load the model'''
-model_name='random_forest_model.joblib'
+'''Now load the model and predict duration'''
+model_name='new_hist_grad_model.joblib'
 loaded_model=joblib.load(model_name)
 y_predict=noml.predict_data(X,loaded_model)
+
+'''Now use the predicted durations to predict the date of discharge and print'''
 days_predict=[]
+dates_predict=[]
 for num in y_predict:
     val=math.ceil(num)
     days_predict.append(val)
-
-
+date_format = "%d/%m/%Y %H:%M" 
+date_list =[datetime.strptime(date, date_format) for date in clean_data_dict['Birth_time']]
+pred_dates=[date + timedelta(days=duration) for date, duration in zip(date_list, days_predict)]
+new_dates_str = [date.strftime("%d/%m/%Y") for date in pred_dates]
+print(new_dates_str)
 

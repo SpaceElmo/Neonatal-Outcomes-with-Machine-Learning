@@ -717,8 +717,8 @@ print('length of the input var list labels',len(full_var_list))
 
 '''select the model'''
 rand_forest=False
-hist_grad_regressor=True
-neural_net=False
+hist_grad_regressor=False
+neural_net=True
 plot=True
 
 if rand_forest==True:
