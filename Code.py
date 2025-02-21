@@ -422,7 +422,7 @@ string_variables=['Sex','BadgerUniqueID','NationalIDBabyAnon','HeadScanFirstResu
 
 new_variables=['duration_of_stay','gestation_days']
 
-input_variables_cat=['EpisodeNumber',
+orig_input_variables_cat=['EpisodeNumber',#these are the variables used for yje poster but they contain paameters that can only be known at discharge. 
 'Readmission',
 'BirthOrder',
 'DischargeDestination',
@@ -444,9 +444,32 @@ input_variables_cat=['EpisodeNumber',
 'ProblemsMedicalMother','Resuscitation','DrugsAbusedMother','DrugsInLabour','LabourPresentation','DischargeFeeding','DischargeMilk',
 'DrugsDuringStay','Sex','HeadScanFirstResult','HeadScanLastResult','MaritalStatusMother','BloodGroupMother','GPPostCode']
 
-input_variables_cont=['AdmitTemperature','BirthHeadCircumference','AdmitBloodGlucose',
+orig_input_variables_cont=['AdmitTemperature','BirthHeadCircumference','AdmitBloodGlucose',
 'gestation_days','Birthweight','AdmitHeadCircumference','CordArterialpH','CordVenouspH','VentilationDays','CPAPDays','MembranerupturedDuration','OxygenDays','CordClampingTimeSecond',
 'CordClampingTimeMinute','ParenteralNutritionDays','ICCareDays2011']#,'HDCareDays2011','SCCareDays2011','NormalCareDays2011'
+
+input_variables_cat=['EpisodeNumber',
+'Readmission',
+'BirthOrder',
+'ResusSurfactant',
+'SteroidsAntenatalCourses',
+'DiabetesMother',
+'SmokingMother',
+'AlcoholMother',
+'Apgar1', 
+'Apgar5', 
+'LabourDelivery',
+'MaternalPyrexiaInLabour38c',
+'HIEGrade','MeconiumStainedLiquor','LabourOnset',
+'SteroidsName','OffensiveLiquor',
+'CordClamping','SteroidsAntenatalGiven','AdmitPrincipalReason','BirthOrder','ProblemsPregnancyMother',
+'ProblemsMedicalMother','Resuscitation','DrugsAbusedMother','DrugsInLabour','LabourPresentation',
+'Sex','MaritalStatusMother','BloodGroupMother','GPPostCode']
+
+input_variables_cont=['AdmitTemperature','BirthHeadCircumference','AdmitBloodGlucose',
+'gestation_days','Birthweight','AdmitHeadCircumference','CordArterialpH','CordVenouspH','MembranerupturedDuration','CordClampingTimeSecond',
+'CordClampingTimeMinute','ICCareDays2011']#,'HDCareDays2011','SCCareDays2011','NormalCareDays2011'
+
 
 output_variables=['duration_of_stay']
 
@@ -825,7 +848,7 @@ if hist_grad_regressor==True:
     loss_score=model[3]
     '''save the model'''
     print('Saving model to file')
-    model_pth=os.path.join('hist_grad_boost_model.joblib')#can add joins to define a bespoke path to store models
+    model_pth=os.path.join('new_hist_grad_boost_model.joblib')#can add joins to define a bespoke path to store models
     joblib.dump(fitted_model,model_pth)
 
     '''Test the model on data and print scores'''
