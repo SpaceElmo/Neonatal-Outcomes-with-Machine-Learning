@@ -304,7 +304,7 @@ def training_loop(n_epochs,lr,optimizer,model,loss_fn,X_train,X_val,y_train,y_va
         loss_train.backward()
         optimizer.step()
         if epoch==1 or epoch % 100 ==0:
-            print(f"Epoch {epoch} , Training loss {loss_train.item():.4f}")
+            print(f"Epoch {epoch} , Training loss {loss_train.item():.4f},"f"Validation loss {loss_val.item():.4f}")
         
  
  
@@ -802,8 +802,8 @@ if neural_net==True:
                             nn.Linear(256, 128),
                             nn.Linear(128, 64),
                             nn.Linear(64, 32),
-                            nn.ReLU(),
-                            nn.Linear(32, 1))
+                            nn.Linear(32, 1),
+                            nn.ReLU())
 
 
     # Hyperparameters
@@ -818,23 +818,27 @@ if neural_net==True:
     # Training the model 
     print('training epochs')
     training_loop(n_epochs,lr,optimizer,model,loss_fn,X_train,X_val,y_train,y_val)
+    print('output', seq_model(X_val))
+    print('answer',y_val)
+    
         
     print("Training complete.")
 
     #Save the model
-    torch.save(model.state_dict(), 'model.pth')
+    torch.save(model.state_dict(), 'my_model.pth')
 
 
     # Load the model
-
-    model.load_state_dict(torch.load('model.pth'))
-    loaded_model.eval() 
+   # from model.pth import modelClass
+   # model=modelClass()
+   # model.load_state_dict(torch.load('model.pth'))
+    #loaded_model.eval() 
 
     # Using the loaded model to make predictions
-    new_data =torch.tensor(...) # Example new data 
-    with torch.no_grad():
-        predictions = loaded_model(new_data)
-        print("Predicted duration of stay:\n", predictions)
+    #new_data =torch.tensor(...) # Example new data 
+    #with torch.no_grad():
+    #    predictions = loaded_model(new_data)
+    #    print("Predicted duration of stay:\n", predictions)
 
 if hist_grad_regressor==True:
     print('Evaluating Histogram Gradient Boost Regressor')
@@ -897,6 +901,11 @@ if plot==True:
         ax.scatter(y_actual,y_predict,s=4,c='b',alpha=0.5,label='RF Model vs Actual')
     if hist_grad_regressor==True:
         ax.scatter(y_actual,y_predict_hist,s=4,c='r',alpha=0.5,label='Hist Boost Regressor Model vs Actual')
+    if neural_net == True:
+        y_actual=y_val
+        y_predict=seq_model(X_val)
+        y_predict=y_predict.detach().numpy()
+        ax.scatter(y_actual,y_predict,s=4,c='r',alpha=0.5,label='Neural net Model vs Actual')    
     ax.legend()
     x=np.linspace(np.min(y_actual),np.max(y_actual),len(y_actual))
     y=x
