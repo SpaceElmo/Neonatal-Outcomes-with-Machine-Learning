@@ -789,22 +789,21 @@ if neural_net==True:
     print('splitting data')
     X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
     #print(X_train)
-    #X_train=torch.tensor(X_train)
-    #X_val=torch.tensor(X_val)
-    #y_train=torch.tensor(y_train)
-    #y_val=torch.tensor(y_val)
-    
-    print(X_train,'data type')
+    X_train=torch.tensor(X_train.astype(np.float32))# nn needs them as floats
+    X_val=torch.tensor(X_val.astype(np.float32))
+    y_train=torch.tensor(y_train.astype(np.float32))
+    y_val=torch.tensor(y_val.astype(np.float32))
+
+    print(X_train.dtype,'data type')
 
     #create a sequential model
     seq_model=nn.Sequential(nn.Linear(input_size, 128),
                             nn.Linear(128, 256),
-                            nn.ReLU(),
                             nn.Linear(256, 128),
-                            nn.ReLU(),
                             nn.Linear(128, 64),
+                            nn.Linear(64, 32),
                             nn.ReLU(),
-                            nn.Linear(64, 1))
+                            nn.Linear(32, 1))
 
 
     # Hyperparameters
@@ -827,8 +826,8 @@ if neural_net==True:
 
 
     # Load the model
-    loaded_model = seq_model()
-    loaded_model.load_state_dict(torch.load('model.pth'))
+
+    model.load_state_dict(torch.load('model.pth'))
     loaded_model.eval() 
 
     # Using the loaded model to make predictions
