@@ -788,27 +788,30 @@ if neural_net==True:
     # Splitting the data
     print('splitting data')
     X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
-    print(X_train)
-    X_train=torch.tensor(X_train.float())
-    X_val=torch.tensor(X_val.float())
-    y_train=torch.tensor(y_train.float())
-    y_val=torch.tensor(y_val.float())
+    #print(X_train)
+    #X_train=torch.tensor(X_train)
+    #X_val=torch.tensor(X_val)
+    #y_train=torch.tensor(y_train)
+    #y_val=torch.tensor(y_val)
+    
     print(X_train,'data type')
 
     #create a sequential model
     seq_model=nn.Sequential(nn.Linear(input_size, 128),
                             nn.Linear(128, 256),
+                            nn.ReLU(),
                             nn.Linear(256, 128),
+                            nn.ReLU(),
                             nn.Linear(128, 64),
-                            nn.Linear(64, 1),
-                            nn.ReLU() )
+                            nn.ReLU(),
+                            nn.Linear(64, 1))
 
 
     # Hyperparameters
 
     lr = 0.001
     n_epochs = 1000
-    model = seq_model(input_size)
+    model = seq_model
     loss_fn = nn.MSELoss() # Loss function for continuous output 
     optimizer = optim.Adam(model.parameters(),lr)
 
@@ -824,7 +827,7 @@ if neural_net==True:
 
 
     # Load the model
-    loaded_model = seq_model(input_size)
+    loaded_model = seq_model()
     loaded_model.load_state_dict(torch.load('model.pth'))
     loaded_model.eval() 
 
