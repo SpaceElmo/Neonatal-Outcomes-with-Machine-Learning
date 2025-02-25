@@ -11,9 +11,11 @@ from matplotlib import cm
 import csv
 from datetime import datetime,timedelta
 import Code as noml
+import streamlit as st
+import ast
 
 #-------Variables------------------------------------------------------------------------------------------------
-'''These are the variable I could see as relavent'''
+'''These are the variable I could see as relevent'''
 variables=['BadgerUniqueID',
 'NationalIDBabyAnon',
 'EpisodeNumber',
@@ -374,3 +376,19 @@ pred_dates=[date + timedelta(days=duration) for date, duration in zip(date_list,
 new_dates_str = [date.strftime("%d/%m/%Y") for date in pred_dates]
 print(new_dates_str)
 
+def main():
+    st.title ("Discharge date Calculator. This calculator predicts the date of discharge using the trained Model.\n The input dictionary can handle one baby at the moment as a pull from Badger.\n")
+    st.write("The categorical variables required are")
+    for var in new_input_variables_cat:
+        st.write(var)
+    st.write("The continuous variables required are")  
+    for var in new_input_variables_cont:
+         st.write(var)
+    dict_input = st.text_area("Input your dictionary here (e.g., {'key1': 'value1', 'key2': 'value2'}):")
+    if dict_input:
+        try:
+            my_dict = ast.literal_eval(dict_input)
+            st.write("Converted dictionary:", my_dict)
+        except Exception as e:
+            st.error("Error converting the input to a dictionary. Please ensure it is in the correct format.")
+            st.error(e)
