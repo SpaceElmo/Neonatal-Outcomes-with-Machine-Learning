@@ -309,618 +309,621 @@ def training_loop(n_epochs,lr,optimizer,model,loss_fn,X_train,X_val,y_train,y_va
  
  
 
+def main():
 
 
 
-today = datetime.today()
+    today = datetime.today()
 
 
 
 
-#-------Variables------------------------------------------------------------------------------------------------
-'''These are the variable I could see as relavent'''
-variables=['BadgerUniqueID',
-'NationalIDBabyAnon',
-'EpisodeNumber',
-'Sex',
-'Readmission',
-'BirthTimeBaby',
-'GestationWeeks',
-'GestationDays',
-'Birthweight',
-'BirthHeadCircumference',
-'BirthOrder',
-'AdmitTime',
-'AdmitTemperature',
-'DischTime',
-'DischargeDestination',
-'ResusSurfactant',
-'VentilationDays',
-'CPAPDays',
-'ICCareDays2011',
-'HDCareDays2011',
-'SCCareDays2011',
-'OxygenDays',#float
-'MeconiumStainedLiquor',#int
-'LabourOnset',#int
-'SteroidsName',#int
-'DrugsDuringStay',#list
-'CordClampingTimeSecond',#float
-'CordClampingTimeMinute',#float
-'MaritalStatusMother',#str
-'OffensiveLiquor',#int
-'LabourPresentation',#int
-'CordClamping',#int
-'BloodGroupMother',#str
-'AdmitHeadCircumference',#float
-'SteroidsAntenatalGiven',#int
-'DrugsInLabour',#list
-'CordArterialpH',#float
-'CordVenouspH',#float
-'GPPostCode',#str
-'ParenteralNutritionDays',#float
-'AdmitPrincipalReason',#int
-'DischargeFeeding',#list
-'DischargeMilk',#list
-'BirthOrder',#int
-'NormalCareDays2011',
-'NECDiagnosis',
-'SteroidsAntenatalCourses',
-'MembranerupturedDuration',
-'HeadScanFirstResult',
-'HeadScanLastResult',
-'ProblemsMedicalMother',
-'DiabetesMother',
-'DrugsAbusedMother',
-'SmokingMother',
-'AlcoholMother',
-'ProblemsPregnancyMother',
-'Apgar1', 
-'Apgar5', 
-'LabourDelivery',
-'Resuscitation',
-'Pneumothorax',
-'NecrotisingEnterocolitis',
-'MaternalPyrexiaInLabour38c',
-'AdmitBloodGlucose',
-'HIEGrade']
+    #-------Variables------------------------------------------------------------------------------------------------
+    '''These are the variable I could see as relavent'''
+    variables=['BadgerUniqueID',
+    'NationalIDBabyAnon',
+    'EpisodeNumber',
+    'Sex',
+    'Readmission',
+    'BirthTimeBaby',
+    'GestationWeeks',
+    'GestationDays',
+    'Birthweight',
+    'BirthHeadCircumference',
+    'BirthOrder',
+    'AdmitTime',
+    'AdmitTemperature',
+    'DischTime',
+    'DischargeDestination',
+    'ResusSurfactant',
+    'VentilationDays',
+    'CPAPDays',
+    'ICCareDays2011',
+    'HDCareDays2011',
+    'SCCareDays2011',
+    'OxygenDays',#float
+    'MeconiumStainedLiquor',#int
+    'LabourOnset',#int
+    'SteroidsName',#int
+    'DrugsDuringStay',#list
+    'CordClampingTimeSecond',#float
+    'CordClampingTimeMinute',#float
+    'MaritalStatusMother',#str
+    'OffensiveLiquor',#int
+    'LabourPresentation',#int
+    'CordClamping',#int
+    'BloodGroupMother',#str
+    'AdmitHeadCircumference',#float
+    'SteroidsAntenatalGiven',#int
+    'DrugsInLabour',#list
+    'CordArterialpH',#float
+    'CordVenouspH',#float
+    'GPPostCode',#str
+    'ParenteralNutritionDays',#float
+    'AdmitPrincipalReason',#int
+    'DischargeFeeding',#list
+    'DischargeMilk',#list
+    'BirthOrder',#int
+    'NormalCareDays2011',
+    'NECDiagnosis',
+    'SteroidsAntenatalCourses',
+    'MembranerupturedDuration',
+    'HeadScanFirstResult',
+    'HeadScanLastResult',
+    'ProblemsMedicalMother',
+    'DiabetesMother',
+    'DrugsAbusedMother',
+    'SmokingMother',
+    'AlcoholMother',
+    'ProblemsPregnancyMother',
+    'Apgar1', 
+    'Apgar5', 
+    'LabourDelivery',
+    'Resuscitation',
+    'Pneumothorax',
+    'NecrotisingEnterocolitis',
+    'MaternalPyrexiaInLabour38c',
+    'AdmitBloodGlucose',
+    'HIEGrade']
 
-int_variables=[
-'EpisodeNumber',
-'Readmission',
-'BirthOrder',
-'DischargeDestination',
-'ResusSurfactant',
-'NECDiagnosis',
-'SteroidsAntenatalCourses',
-'DiabetesMother',
-'SmokingMother',
-'AlcoholMother',
-'Apgar1', 
-'Apgar5', 
-'LabourDelivery',
-'Pneumothorax',
-'NecrotisingEnterocolitis',
-'MaternalPyrexiaInLabour38c',
-'HIEGrade','MeconiumStainedLiquor','LabourOnset',
-'SteroidsName','OffensiveLiquor',
-'CordClamping','SteroidsAntenatalGiven','AdmitPrincipalReason','BirthOrder']
+    int_variables=[
+    'EpisodeNumber',
+    'Readmission',
+    'BirthOrder',
+    'DischargeDestination',
+    'ResusSurfactant',
+    'NECDiagnosis',
+    'SteroidsAntenatalCourses',
+    'DiabetesMother',
+    'SmokingMother',
+    'AlcoholMother',
+    'Apgar1', 
+    'Apgar5', 
+    'LabourDelivery',
+    'Pneumothorax',
+    'NecrotisingEnterocolitis',
+    'MaternalPyrexiaInLabour38c',
+    'HIEGrade','MeconiumStainedLiquor','LabourOnset',
+    'SteroidsName','OffensiveLiquor',
+    'CordClamping','SteroidsAntenatalGiven','AdmitPrincipalReason','BirthOrder']
 
-time_variables=['BirthTimeBaby','AdmitTime','DischTime']
+    time_variables=['BirthTimeBaby','AdmitTime','DischTime']
 
-float_variables=['AdmitTemperature','BirthHeadCircumference','AdmitBloodGlucose','GestationWeeks',
-                 'GestationDays','Birthweight','AdmitHeadCircumference','CordArterialpH','CordVenouspH']
+    float_variables=['AdmitTemperature','BirthHeadCircumference','AdmitBloodGlucose','GestationWeeks',
+                    'GestationDays','Birthweight','AdmitHeadCircumference','CordArterialpH','CordVenouspH']
 
-float_variables_zero=['VentilationDays','CPAPDays','ICCareDays2011','HDCareDays2011','SCCareDays2011','NormalCareDays2011','MembranerupturedDuration','OxygenDays','CordClampingTimeSecond',
-'CordClampingTimeMinute','ParenteralNutritionDays']
+    float_variables_zero=['VentilationDays','CPAPDays','ICCareDays2011','HDCareDays2011','SCCareDays2011','NormalCareDays2011','MembranerupturedDuration','OxygenDays','CordClampingTimeSecond',
+    'CordClampingTimeMinute','ParenteralNutritionDays']
 
-list_variables=['ProblemsPregnancyMother','ProblemsMedicalMother','Resuscitation','DrugsAbusedMother','DrugsInLabour','LabourPresentation','DischargeFeeding','DischargeMilk']#list of ints
+    list_variables=['ProblemsPregnancyMother','ProblemsMedicalMother','Resuscitation','DrugsAbusedMother','DrugsInLabour','LabourPresentation','DischargeFeeding','DischargeMilk']#list of ints
 
-list_variables_str=['DrugsDuringStay']#had to add this as this is a list of strings not ints from a picklist. would put diagnosis in this cat
+    list_variables_str=['DrugsDuringStay']#had to add this as this is a list of strings not ints from a picklist. would put diagnosis in this cat
 
-string_variables=['Sex','BadgerUniqueID','NationalIDBabyAnon','HeadScanFirstResult','HeadScanLastResult','MaritalStatusMother','BloodGroupMother','GPPostCode']
+    string_variables=['Sex','BadgerUniqueID','NationalIDBabyAnon','HeadScanFirstResult','HeadScanLastResult','MaritalStatusMother','BloodGroupMother','GPPostCode']
 
-new_variables=['duration_of_stay','gestation_days']
+    new_variables=['duration_of_stay','gestation_days']
 
-orig_input_variables_cat=['EpisodeNumber',#these are the variables used for yje poster but they contain paameters that can only be known at discharge. 
-'Readmission',
-'BirthOrder',
-'DischargeDestination',
-'ResusSurfactant',
-'NECDiagnosis',
-'SteroidsAntenatalCourses',
-'DiabetesMother',
-'SmokingMother',
-'AlcoholMother',
-'Apgar1', 
-'Apgar5', 
-'LabourDelivery',
-'Pneumothorax',
-'NecrotisingEnterocolitis',
-'MaternalPyrexiaInLabour38c',
-'HIEGrade','MeconiumStainedLiquor','LabourOnset',
-'SteroidsName','OffensiveLiquor',
-'CordClamping','SteroidsAntenatalGiven','AdmitPrincipalReason','BirthOrder','ProblemsPregnancyMother',
-'ProblemsMedicalMother','Resuscitation','DrugsAbusedMother','DrugsInLabour','LabourPresentation','DischargeFeeding','DischargeMilk',
-'DrugsDuringStay','Sex','HeadScanFirstResult','HeadScanLastResult','MaritalStatusMother','BloodGroupMother','GPPostCode']
+    orig_input_variables_cat=['EpisodeNumber',#these are the variables used for yje poster but they contain paameters that can only be known at discharge. 
+    'Readmission',
+    'BirthOrder',
+    'DischargeDestination',
+    'ResusSurfactant',
+    'NECDiagnosis',
+    'SteroidsAntenatalCourses',
+    'DiabetesMother',
+    'SmokingMother',
+    'AlcoholMother',
+    'Apgar1', 
+    'Apgar5', 
+    'LabourDelivery',
+    'Pneumothorax',
+    'NecrotisingEnterocolitis',
+    'MaternalPyrexiaInLabour38c',
+    'HIEGrade','MeconiumStainedLiquor','LabourOnset',
+    'SteroidsName','OffensiveLiquor',
+    'CordClamping','SteroidsAntenatalGiven','AdmitPrincipalReason','BirthOrder','ProblemsPregnancyMother',
+    'ProblemsMedicalMother','Resuscitation','DrugsAbusedMother','DrugsInLabour','LabourPresentation','DischargeFeeding','DischargeMilk',
+    'DrugsDuringStay','Sex','HeadScanFirstResult','HeadScanLastResult','MaritalStatusMother','BloodGroupMother','GPPostCode']
 
-orig_input_variables_cont=['AdmitTemperature','BirthHeadCircumference','AdmitBloodGlucose',
-'gestation_days','Birthweight','AdmitHeadCircumference','CordArterialpH','CordVenouspH','VentilationDays','CPAPDays','MembranerupturedDuration','OxygenDays','CordClampingTimeSecond',
-'CordClampingTimeMinute','ParenteralNutritionDays','ICCareDays2011']#,'HDCareDays2011','SCCareDays2011','NormalCareDays2011'
+    orig_input_variables_cont=['AdmitTemperature','BirthHeadCircumference','AdmitBloodGlucose',
+    'gestation_days','Birthweight','AdmitHeadCircumference','CordArterialpH','CordVenouspH','VentilationDays','CPAPDays','MembranerupturedDuration','OxygenDays','CordClampingTimeSecond',
+    'CordClampingTimeMinute','ParenteralNutritionDays','ICCareDays2011']#,'HDCareDays2011','SCCareDays2011','NormalCareDays2011'
 
-new_input_variables_cat=['EpisodeNumber',#can adjust these if needed
-'Readmission',
-'BirthOrder',
-'ResusSurfactant',
-'SteroidsAntenatalCourses',
-'DiabetesMother',
-'SmokingMother',
-'AlcoholMother',
-'Apgar1', 
-'Apgar5', 
-'LabourDelivery',
-'MaternalPyrexiaInLabour38c',
-'HIEGrade','MeconiumStainedLiquor','LabourOnset',
-'SteroidsName','OffensiveLiquor',
-'CordClamping','SteroidsAntenatalGiven','AdmitPrincipalReason','BirthOrder','ProblemsPregnancyMother',
-'ProblemsMedicalMother','Resuscitation','DrugsAbusedMother','DrugsInLabour','LabourPresentation',
-'Sex','MaritalStatusMother','BloodGroupMother','GPPostCode']
+    new_input_variables_cat=['EpisodeNumber',#can adjust these if needed
+    'Readmission',
+    'BirthOrder',
+    'ResusSurfactant',
+    'SteroidsAntenatalCourses',
+    'DiabetesMother',
+    'SmokingMother',
+    'AlcoholMother',
+    'Apgar1', 
+    'Apgar5', 
+    'LabourDelivery',
+    'MaternalPyrexiaInLabour38c',
+    'HIEGrade','MeconiumStainedLiquor','LabourOnset',
+    'SteroidsName','OffensiveLiquor',
+    'CordClamping','SteroidsAntenatalGiven','AdmitPrincipalReason','BirthOrder','ProblemsPregnancyMother',
+    'ProblemsMedicalMother','Resuscitation','DrugsAbusedMother','DrugsInLabour','LabourPresentation',
+    'Sex','MaritalStatusMother','BloodGroupMother','GPPostCode']
 
-new_input_variables_cont=['AdmitTemperature','BirthHeadCircumference','AdmitBloodGlucose',
-'gestation_days','Birthweight','AdmitHeadCircumference','CordArterialpH','CordVenouspH','MembranerupturedDuration','CordClampingTimeSecond',
-'CordClampingTimeMinute','ICCareDays2011']#,'HDCareDays2011','SCCareDays2011','NormalCareDays2011'
+    new_input_variables_cont=['AdmitTemperature','BirthHeadCircumference','AdmitBloodGlucose',
+    'gestation_days','Birthweight','AdmitHeadCircumference','CordArterialpH','CordVenouspH','MembranerupturedDuration','CordClampingTimeSecond',
+    'CordClampingTimeMinute','ICCareDays2011']#,'HDCareDays2011','SCCareDays2011','NormalCareDays2011'
 
-orig=0#set to 1 if you want the input vars used in teh bapm paper
+    orig=0#set to 1 if you want the input vars used in teh bapm paper
 
-#in order to more easily adjust input variables of model. Remmeber to change saved model 
-if orig==1:
-    input_variables_cat=orig_input_variables_cat
-    input_variables_cont=orig_input_variables_cont
-else:
-    input_variables_cat=new_input_variables_cat
-    input_variables_cont=new_input_variables_cont
-
-
-output_variables=['duration_of_stay']
-
-verbose=False
-
-#Executables---------------------------------------------------------------------------------
-'''Get the file'''
-file_path = '../data/Badger download.csv' 
-print('getting file and converting to dict')
-data= csv_to_dict(file_path) #create a list of dicts of all episodes. May contain multiple copies of baby. 
-remainder=set()
-all_keys=data[0].keys
-for key in data[0].keys():
-    if key in variables:
-        continue
+    #in order to more easily adjust input variables of model. Remmeber to change saved model 
+    if orig==1:
+        input_variables_cat=orig_input_variables_cat
+        input_variables_cont=orig_input_variables_cont
     else:
-        remainder.add(key)
-
-#print(remainder)
-#for key in remainder:
-#    print(key,data[0][key])
+        input_variables_cat=new_input_variables_cat
+        input_variables_cont=new_input_variables_cont
 
 
+    output_variables=['duration_of_stay']
+
+    verbose=False
+
+    #Executables---------------------------------------------------------------------------------
+    '''Get the file'''
+    file_path = '../data/Badger download.csv' 
+    print('getting file and converting to dict')
+    data= csv_to_dict(file_path) #create a list of dicts of all episodes. May contain multiple copies of baby. 
+    remainder=set()
+    all_keys=data[0].keys
+    for key in data[0].keys():
+        if key in variables:
+            continue
+        else:
+            remainder.add(key)
+
+    #print(remainder)
+    #for key in remainder:
+    #    print(key,data[0][key])
 
 
-'''Now merge babies with multiple episodes by only keeping the latest episode. Remove cases where baby died or was transferred for repatriation or is outside the min and max stay thresholds. 
-Exclude all cases >36 weeks. 
-Exclude readmited and then exclude any duplicates'''
-print('Applying exclusion criteria')
-exclude_list=set()
-exclude_crit=['3','17','99']#,death or repatriation
-for i,case in enumerate(data):
-    for crit in exclude_crit:
-        if case['DischargeDestination']==crit:
-            exclude_HN=case['NationalIDBabyAnon']
-            #print(exclude_HN)
-            exclude_list.add(exclude_HN)
 
 
-for i,exclude in enumerate(exclude_list):#Now remove excluded cases from data
-    for j,case in enumerate(data):
-        if exclude==case['NationalIDBabyAnon']:
-            del data[j]
+    '''Now merge babies with multiple episodes by only keeping the latest episode. Remove cases where baby died or was transferred for repatriation or is outside the min and max stay thresholds. 
+    Exclude all cases >36 weeks. 
+    Exclude readmited and then exclude any duplicates'''
+    print('Applying exclusion criteria')
+    exclude_list=set()
+    exclude_crit=['3','17','99']#,death or repatriation
+    for i,case in enumerate(data):
+        for crit in exclude_crit:
+            if case['DischargeDestination']==crit:
+                exclude_HN=case['NationalIDBabyAnon']
+                #print(exclude_HN)
+                exclude_list.add(exclude_HN)
 
 
-exclude_gest=['22','23','24','25','26','36','37','38','39','40']#exclude all episodes of these birth gestation
-for i,case in enumerate(data):
-    for crit in exclude_gest:
-        if case['GestationWeeks']==crit:
-            exclude_HN=case['NationalIDBabyAnon']
+    for i,exclude in enumerate(exclude_list):#Now remove excluded cases from data
+        for j,case in enumerate(data):
+            if exclude==case['NationalIDBabyAnon']:
+                del data[j]
+
+
+    exclude_gest=['22','23','24','25','26','36','37','38','39','40']#exclude all episodes of these birth gestation
+    for i,case in enumerate(data):
+        for crit in exclude_gest:
+            if case['GestationWeeks']==crit:
+                exclude_HN=case['NationalIDBabyAnon']
+                del data[i]
+
+
+    remove_eps=['10','11','12','13','14','15','16','2']#episode where discharge was to other hospital or to the ward. Preserves the readmission
+    for i,case in enumerate(data):
+        for crit in remove_eps:
+            if case['DischargeDestination']==crit:
+                del data[i]
+
+    max_stay=float(100)#exclude cases that have a min or max stay
+    min_stay=float(1) 
+    for i,case in enumerate(data):
+        duration=days_difference(case['BirthTimeBaby'],case['DischTime'])
+        #print(duration)
+        if duration is None:
+            del data[i]
+            continue
+        elif float(duration)>max_stay:
+            del data[i]
+        elif float(duration)<=min_stay:
             del data[i]
 
+    readmission_list=set()
+    for i,case in enumerate(data):
+        if case['Readmission']=='1':
+            readmission_HN=case['NationalIDBabyAnon']
+            #print(readmission_HN)
+            readmission_list.add(readmission_HN)
 
-remove_eps=['10','11','12','13','14','15','16','2']#episode where discharge was to other hospital or to the ward. Preserves the readmission
-for i,case in enumerate(data):
-    for crit in remove_eps:
-        if case['DischargeDestination']==crit:
-            del data[i]
-
-max_stay=float(100)#exclude cases that have a min or max stay
-min_stay=float(1) 
-for i,case in enumerate(data):
-    duration=days_difference(case['BirthTimeBaby'],case['DischTime'])
-    #print(duration)
-    if duration is None:
-        del data[i]
-        continue
-    elif float(duration)>max_stay:
-        del data[i]
-    elif float(duration)<=min_stay:
-        del data[i]
-
-readmission_list=set()
-for i,case in enumerate(data):
-    if case['Readmission']=='1':
-        readmission_HN=case['NationalIDBabyAnon']
-        #print(readmission_HN)
-        readmission_list.add(readmission_HN)
-
-for i,exclude in enumerate(readmission_list):#remove readmitted cases from data as per discussion with GG
-    for j,case in enumerate(data):
-        if exclude==case['NationalIDBabyAnon']:
-            del data[j]
+    for i,exclude in enumerate(readmission_list):#remove readmitted cases from data as per discussion with GG
+        for j,case in enumerate(data):
+            if exclude==case['NationalIDBabyAnon']:
+                del data[j]
 
 
-HN_list=[]
-for i,case in enumerate(data):
-    HN_list.append(case['NationalIDBabyAnon'])
+    HN_list=[]
+    for i,case in enumerate(data):
+        HN_list.append(case['NationalIDBabyAnon'])
 
-dups=find_duplicates(HN_list)
-#print(len(dups))
-for j,case in enumerate(data):#Now remove all duplicate entries
-    for dup in dups:
-        if case['NationalIDBabyAnon']==dup:
-            del data[j]
-
-
-#print(len(exclude_list))
-#print(len(readmission_list))
-#print(len(data))
+    dups=find_duplicates(HN_list)
+    #print(len(dups))
+    for j,case in enumerate(data):#Now remove all duplicate entries
+        for dup in dups:
+            if case['NationalIDBabyAnon']==dup:
+                del data[j]
 
 
-'''Convert the list of dicts into a dict of values'''
-print('Converting to list of vals')
-data_dict={}
-for i,keyname in enumerate(variables):
-    vals=convert_to_np(data,keyname)
-    data_dict.update({keyname:vals})
-#print(data_dict['GestationWeeks'])    
+    #print(len(exclude_list))
+    #print(len(readmission_list))
+    #print(len(data))
 
-'''Now clean the data -Convert gestation to days val. Get the discharge time. Convert to ints or floats or lists where appropriate. Replace missing vals. '''
 
-print('Cleaning data')
-clean_data_dict={}
-for variable in int_variables:
-    #print(variable)
-    int_vals=convert_to_int(data_dict[variable])
-    clean_data_dict.update({variable:int_vals})
-for variable in float_variables+float_variables_zero:
-    #print(variable)
-    float_vals=convert_to_float(data_dict[variable])
-    clean_data_dict.update({variable:float_vals})
-for variable in list_variables:
-    #print(variable)
-    list_vals=convert_to_list(data_dict[variable])
-    clean_data_dict.update({variable:list_vals})
-for variable in list_variables_str:
-    #print(variable)
-    list_vals=convert_to_str_list(data_dict[variable])
-    clean_data_dict.update({variable:list_vals})   
-for variable in string_variables:
-    str_vals=convert_to_str(data_dict[variable])
-    #print(variable)
-    clean_data_dict.update({variable:str_vals})
+    '''Convert the list of dicts into a dict of values'''
+    print('Converting to list of vals')
+    data_dict={}
+    for i,keyname in enumerate(variables):
+        vals=convert_to_np(data,keyname)
+        data_dict.update({keyname:vals})
+    #print(data_dict['GestationWeeks'])    
 
-duration_list=[]
-for i,time in enumerate(data_dict['BirthTimeBaby']):
-    duration=days_difference(time,data_dict['DischTime'][i])#Note that this is defined from birth to discharge, not admission. Later episodes will not depend on admission time
-    duration_list.append(duration)
-clean_duration=convert_to_float(duration_list)    
-clean_data_dict.update({'duration_of_stay':clean_duration})
+    '''Now clean the data -Convert gestation to days val. Get the discharge time. Convert to ints or floats or lists where appropriate. Replace missing vals. '''
 
-#print(clean_data_dict['duration_of_stay'])
-gestation_days=clean_data_dict['GestationWeeks']*7+clean_data_dict['GestationDays']
-clean_array=convert_to_float(gestation_days)
-clean_data_dict.update({'gestation_days':clean_array})
+    print('Cleaning data')
+    clean_data_dict={}
+    for variable in int_variables:
+        #print(variable)
+        int_vals=convert_to_int(data_dict[variable])
+        clean_data_dict.update({variable:int_vals})
+    for variable in float_variables+float_variables_zero:
+        #print(variable)
+        float_vals=convert_to_float(data_dict[variable])
+        clean_data_dict.update({variable:float_vals})
+    for variable in list_variables:
+        #print(variable)
+        list_vals=convert_to_list(data_dict[variable])
+        clean_data_dict.update({variable:list_vals})
+    for variable in list_variables_str:
+        #print(variable)
+        list_vals=convert_to_str_list(data_dict[variable])
+        clean_data_dict.update({variable:list_vals})   
+    for variable in string_variables:
+        str_vals=convert_to_str(data_dict[variable])
+        #print(variable)
+        clean_data_dict.update({variable:str_vals})
+
+    duration_list=[]
+    for i,time in enumerate(data_dict['BirthTimeBaby']):
+        duration=days_difference(time,data_dict['DischTime'][i])#Note that this is defined from birth to discharge, not admission. Later episodes will not depend on admission time
+        duration_list.append(duration)
+    clean_duration=convert_to_float(duration_list)    
+    clean_data_dict.update({'duration_of_stay':clean_duration})
+
+    #print(clean_data_dict['duration_of_stay'])
+    gestation_days=clean_data_dict['GestationWeeks']*7+clean_data_dict['GestationDays']
+    clean_array=convert_to_float(gestation_days)
+    clean_data_dict.update({'gestation_days':clean_array})
 
 
 
-#for val in clean_data_dict['DrugsDuringStay']:
-    #print(val)
-#print(clean_data_dict['duration_of_stay'])
-#print(np.min(clean_data_dict['GestationWeeks']))
+    #for val in clean_data_dict['DrugsDuringStay']:
+        #print(val)
+    #print(clean_data_dict['duration_of_stay'])
+    #print(np.min(clean_data_dict['GestationWeeks']))
 
-'''Now preprocess the data - one hot encoding and replace missing vals with median or 0. Store the category orders somewhere'''
+    '''Now preprocess the data - one hot encoding and replace missing vals with median or 0. Store the category orders somewhere'''
 
-print('Preprocessing data')
-#print(clean_data_dict['ProblemsPregnancyMother'])
-#print(encode_list(clean_data_dict['ProblemsPregnancyMother'],verbose=True))
-for variable in list_variables+list_variables_str:
-    print('encoding '+variable)
-    encoded_array=encode_list(clean_data_dict[variable],verbose=verbose)
-    #print(encoded_array[0],'classes',encoded_array[1])
-    clean_data_dict.update({'encoded_'+variable:encoded_array[0]})#get the values
-    clean_data_dict.update({'encoded_'+variable+'_classes':encoded_array[1]})#get the one hot encoded categories too
-for variable in int_variables+string_variables:
-    print('encoding '+variable)
-    encoded_array=encode_int(clean_data_dict[variable],verbose=verbose)
-    #print(encoded_array[0],'classes',encoded_array[1])
-    clean_data_dict.update({'encoded_'+variable:encoded_array[0]})
-    clean_data_dict.update({'encoded_'+variable+'_classes':encoded_array[1]})  
+    print('Preprocessing data')
+    #print(clean_data_dict['ProblemsPregnancyMother'])
+    #print(encode_list(clean_data_dict['ProblemsPregnancyMother'],verbose=True))
+    for variable in list_variables+list_variables_str:
+        print('encoding '+variable)
+        encoded_array=encode_list(clean_data_dict[variable],verbose=verbose)
+        #print(encoded_array[0],'classes',encoded_array[1])
+        clean_data_dict.update({'encoded_'+variable:encoded_array[0]})#get the values
+        clean_data_dict.update({'encoded_'+variable+'_classes':encoded_array[1]})#get the one hot encoded categories too
+    for variable in int_variables+string_variables:
+        print('encoding '+variable)
+        encoded_array=encode_int(clean_data_dict[variable],verbose=verbose)
+        #print(encoded_array[0],'classes',encoded_array[1])
+        clean_data_dict.update({'encoded_'+variable:encoded_array[0]})
+        clean_data_dict.update({'encoded_'+variable+'_classes':encoded_array[1]})  
 
-for variable in float_variables+new_variables:#replace missing values in floats with median
-    print('cleaning '+variable)
-    median_val=np.nanmedian(clean_data_dict[variable])
-    for i,val in enumerate(clean_data_dict[variable]):
-        if np.isnan(val):
-            clean_data_dict[variable][i]=median_val
-for variable in float_variables_zero:#replace missing values in floats with 0
-    print('cleaning '+variable)
-    median_val=np.nanmedian(clean_data_dict[variable])
-    for i,val in enumerate(clean_data_dict[variable]):
-        if np.isnan(val):
-            clean_data_dict[variable][i]=0
-
-
-#for variable in float_variables_zero+float_variables:
-#    print(variable,clean_data_dict[variable])
+    for variable in float_variables+new_variables:#replace missing values in floats with median
+        print('cleaning '+variable)
+        median_val=np.nanmedian(clean_data_dict[variable])
+        for i,val in enumerate(clean_data_dict[variable]):
+            if np.isnan(val):
+                clean_data_dict[variable][i]=median_val
+    for variable in float_variables_zero:#replace missing values in floats with 0
+        print('cleaning '+variable)
+        median_val=np.nanmedian(clean_data_dict[variable])
+        for i,val in enumerate(clean_data_dict[variable]):
+            if np.isnan(val):
+                clean_data_dict[variable][i]=0
 
 
-'''Now train the model. Random forest, Hist gradient regressor and unsupervised neural network.'''
+    #for variable in float_variables_zero+float_variables:
+    #    print(variable,clean_data_dict[variable])
 
 
-print('Now collating model input and output')
+    '''Now train the model. Random forest, Hist gradient regressor and unsupervised neural network.'''
 
 
-'''Collect the input and output params in X input  and y output arrays'''
-use_encoded_var=True#if categoricals need to be one hot encoded then set this to true
-y=np.array([])
-if use_encoded_var:
-    for i,variable in enumerate(input_variables_cat):
-        input_variables_cat[i]='encoded_'+variable#uses encoded variables
+    print('Now collating model input and output')
 
-zero_d=len(clean_data_dict['NationalIDBabyAnon'])
-one_d= len(input_variables_cont)+len(input_variables_cat)
-cont_d=len(input_variables_cont)
-cat_d=len(input_variables_cat)
-print('variable length',len(variables))
-print('cont var length',len(input_variables_cont))
-print('cat var length',len(input_variables_cat))
-twodarray_list=[]
-for var in (input_variables_cont+input_variables_cat):#note that this is the var order. The cat vars will have a category order also. 
-    variable=clean_data_dict[var]
-    if variable.ndim==1:
-        twodvar=variable.reshape(-1,1)#convert all arrays to 2 d and hstack them columnwise.
-    else:
-        twodvar=variable
-    twodarray_list.append(twodvar)
-input_array=np.hstack(twodarray_list)
-X=input_array 
-y=np.append(y,clean_data_dict[output_variables[0]])    
-print('X shape',X.shape)
-print('y shape',y.shape)
-full_var_list=[]#label the columns in the input array with teh appropriate category for later analysis. cat names are repeated if the encoding is in the same cat
-for variable in (input_variables_cont):
-    full_var_list.append(variable)
-for variable in (input_variables_cat):
-    #print(variable)
-    #print(clean_data_dict[variable+'_classes'])
-    num_cat=len(clean_data_dict[variable+'_classes'][0])
-    for _ in range(num_cat):
+
+    '''Collect the input and output params in X input  and y output arrays'''
+    use_encoded_var=True#if categoricals need to be one hot encoded then set this to true
+    y=np.array([])
+    if use_encoded_var:
+        for i,variable in enumerate(input_variables_cat):
+            input_variables_cat[i]='encoded_'+variable#uses encoded variables
+
+    zero_d=len(clean_data_dict['NationalIDBabyAnon'])
+    one_d= len(input_variables_cont)+len(input_variables_cat)
+    cont_d=len(input_variables_cont)
+    cat_d=len(input_variables_cat)
+    print('variable length',len(variables))
+    print('cont var length',len(input_variables_cont))
+    print('cat var length',len(input_variables_cat))
+    twodarray_list=[]
+    for var in (input_variables_cont+input_variables_cat):#note that this is the var order. The cat vars will have a category order also. 
+        variable=clean_data_dict[var]
+        if variable.ndim==1:
+            twodvar=variable.reshape(-1,1)#convert all arrays to 2 d and hstack them columnwise.
+        else:
+            twodvar=variable
+        twodarray_list.append(twodvar)
+    input_array=np.hstack(twodarray_list)
+    X=input_array 
+    y=np.append(y,clean_data_dict[output_variables[0]])    
+    print('X shape',X.shape)
+    print('y shape',y.shape)
+    full_var_list=[]#label the columns in the input array with teh appropriate category for later analysis. cat names are repeated if the encoding is in the same cat
+    for variable in (input_variables_cont):
         full_var_list.append(variable)
-print('length of the input var list labels',len(full_var_list))
+    for variable in (input_variables_cat):
+        #print(variable)
+        #print(clean_data_dict[variable+'_classes'])
+        num_cat=len(clean_data_dict[variable+'_classes'][0])
+        for _ in range(num_cat):
+            full_var_list.append(variable)
+    print('length of the input var list labels',len(full_var_list))
 
 
-'''select the model'''
-rand_forest=False
-hist_grad_regressor=False
-neural_net=True
-plot=True
+    '''select the model'''
+    rand_forest=False
+    hist_grad_regressor=True
+    neural_net=False
+    plot=True
 
-if rand_forest==True:
-    '''Random forest regressor model training'''
-    print('Evaluating Random Forest')
-    model=evaluate_model(X,y,splits=10,repeats=20)
-    fitted_model=model[2]
-    y_actual=model[5]
-    X_test=model[4]
-    y_train=model[6]
-    X_train=model[7]
-    score=model[0]
-    score_sd=model[1]
-    loss_score=model[3]
- 
-
-    '''save the model'''
-    print('Saving model to file')
-    model_pth=os.path.join('random_forest_model.joblib')#can add joins to define a bespoke path to store models
-    joblib.dump(fitted_model,model_pth)
-
-    '''Test the model on data and print scores'''
-    print('opening model and testing')
-    loaded_model=joblib.load(model_pth)
-    y_predict=predict_data(X_test,loaded_model)
-    y_predict=[math.ceil(num) for num in y_predict]#push the predicted value to the ceiling integer
-    calculated_r2=r2_score(y_actual,y_predict)
-    print(f'R2 score is {calculated_r2} with cross validation score {score} with sd {score_sd} and MAE {loss_score}') 
-    residuals = y_actual - y_predict
-    # Calculate standard deviation of residuals 
-    n = len(y_actual)
-    mean_resid=np.sqrt(np.sum(residuals**2))/n
-    sd_resid=np.std(np.sqrt(residuals**2))
-    std_dev_residuals = np.sqrt(np.sum(residuals**2) / (n - X.shape[1]))
-    print('sd of residuals is ',std_dev_residuals)
-    print('calculated sd of residuals ', sd_resid, ' with mean ',mean_resid)
-    #with open('rf_result.txt', 'w') as file:
-    #     file.write([score,score_sd,loss_score])
-
-    '''find the most important variable sthat explain the model'''
-    r=permutation_importance(loaded_model,X_test,y_actual,n_repeats=20,random_state=11)
-    #print('mean importances',(r['importances_mean']))
-    max_importance_idx=(np.argmax(r['importances_mean']))
-    print('max importance idx',max_importance_idx)
-
-    sorted_idx=np.argsort(r['importances_mean'])
-
-    print('The most important variable is ',full_var_list[max_importance_idx])
-    for i,idx in enumerate(sorted_idx[:-10-1:-1]):#get the largest values in the arg sort
-        #idx=sorted_idx[i]
-        #print(idx)
-        print(f"The {i} most important variable is {full_var_list[idx]} with a mean of {r['importances_mean'][idx]} and sd {r['importances_std'][idx]}")
-        #with open('rf_result.txt') as file:
-        #    file.write('The'+ str(i) +'most important variable is '+full_var_list[idx] +'with a mean of '+str(r['importances_mean'][idx])+' and sd '+str(r['importances_std'][idx])+'\n')
-    
-if neural_net==True:
-    print('Now training the nn model')
-    input_size = X.shape[1]
-    case_num=X.shape[0]
-    print(input_size,'input_size')
-    # Data preprocessing - standardizing the continuous features
-    print('scaling and masking cont vars')
-    continuous_mask = [True if i < cont_d else False for i in range(input_size)] # mask the continuous variables 
-    scaler = StandardScaler() 
-    X[:, continuous_mask] = torch.tensor(scaler.fit_transform(X[:, continuous_mask]))
-
-    # Splitting the data
-    print('splitting data')
-    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
-    #print(X_train)
-    X_train=torch.tensor(X_train.astype(np.float32))# nn needs them as floats
-    X_val=torch.tensor(X_val.astype(np.float32))
-    y_train=torch.tensor(y_train.astype(np.float32))
-    y_val=torch.tensor(y_val.astype(np.float32))
-
-    print(X_train.dtype,'data type')
-
-    #create a sequential model
-    seq_model=nn.Sequential(nn.Linear(input_size, 128),
-                            nn.Linear(128, 256),
-                            nn.Linear(256, 128),
-                            nn.Linear(128, 64),
-                            nn.Linear(64, 32),
-                            nn.Linear(32, 1),
-                            nn.ReLU())
-
-
-    # Hyperparameters
-
-    lr = 0.001
-    n_epochs = 1000
-    model = seq_model
-    loss_fn = nn.MSELoss() # Loss function for continuous output 
-    optimizer = optim.Adam(model.parameters(),lr)
-
-
-    # Training the model 
-    print('training epochs')
-    training_loop(n_epochs,lr,optimizer,model,loss_fn,X_train,X_val,y_train,y_val)
-    print('output', seq_model(X_val))
-    print('answer',y_val)
-    
-        
-    print("Training complete.")
-
-    #Save the model
-    torch.save(model.state_dict(), 'my_model.pth')
-
-
-    # Load the model
-   # from model.pth import modelClass
-   # model=modelClass()
-   # model.load_state_dict(torch.load('model.pth'))
-    #loaded_model.eval() 
-
-    # Using the loaded model to make predictions
-    #new_data =torch.tensor(...) # Example new data 
-    #with torch.no_grad():
-    #    predictions = loaded_model(new_data)
-    #    print("Predicted duration of stay:\n", predictions)
-
-if hist_grad_regressor==True:
-    print('Evaluating Histogram Gradient Boost Regressor')
-    cat_feat=np.zeros(X.shape[1],dtype=bool)#define an array the same size as all categories
-    cat_feat[cont_d+1:-1]=True#true for cat vars
-    model=evaluate_hist_model(X,y,splits=10,repeats=20,cat_feat=cat_feat)
-    fitted_model=model[2]
-    y_actual=model[5]
-    X_test=model[4]
-    y_train=model[6]
-    X_train=model[7]
-    score=model[0]
-    score_sd=model[1]
-    loss_score=model[3]
-    '''save the model'''
-    print('Saving model to file')
-    model_pth=os.path.join('new_hist_grad_boost_model.joblib')#can add joins to define a bespoke path to store models
-    joblib.dump(fitted_model,model_pth)
-
-    '''Test the model on data and print scores'''
-    print('opening model and testing')
-    loaded_model=joblib.load(model_pth)
-    y_predict_hist=predict_data(X_test,loaded_model)
-    y_predict_hist=[math.ceil(num) for num in y_predict_hist]#push the predicted value to the ceiling integer
-    calculated_r2=r2_score(y_actual,y_predict_hist)
-    print(f'R2 score is {calculated_r2} with cross validation score {score} with sd {score_sd} and MAE {loss_score}') 
-    residuals = y_actual - y_predict_hist
-    # Calculate standard deviation of residuals 
-    n = len(y_actual)
-    mean_resid=np.sqrt(np.sum(residuals**2))/n
-    sd_resid=np.std(np.sqrt(residuals**2))
-    std_dev_residuals = np.sqrt(np.sum(residuals**2) / (n - X.shape[1]))
-    print('sd of residuals is ',std_dev_residuals)
-    print('calculated sd of residuals ', sd_resid, ' with mean ',mean_resid)
-    #with open('hist_result.txt', 'w') as file:
-    #     file.write(score,score_sd,loss_score])
-    '''find the most important variable sthat explain the model'''
-    r=permutation_importance(loaded_model,X_test,y_actual,n_repeats=20,random_state=11)
-    #print('mean importances',(r['importances_mean']))
-    max_importance_idx=(np.argmax(r['importances_mean']))
-    print('max importance idx',max_importance_idx)
-
-    sorted_idx=np.argsort(r['importances_mean'])
-
-    print('The most important variable is ',full_var_list[max_importance_idx])
-    for i,idx in enumerate(sorted_idx[:-10-1:-1]):#get the largest values in the arg sort
-        #idx=sorted_idx[i]
-        #print(idx)
-        print(f"The {i} most important variable is {full_var_list[idx]} with a mean of {r['importances_mean'][idx]} and sd {r['importances_std'][idx]}")
-        #with open('hist_result.txt', 'w') as file:
-        # file.write('The'+ str(i) +'most important variable is '+full_var_list[idx] +'with a mean of '+str(r['importances_mean'][idx])+' and sd '+str(r['importances_std'][idx])+'\n')
-
-if plot==True:
-    #Plots for information---------
-    
-    fig,ax=plt.subplots()
-    #array=np.array(clean_data_dict['duration_of_stay'])
-    #ax.scatter(clean_data_dict['gestation_days']/7,array,s=4,c='b',label='Gestation vs Duration of stay')
     if rand_forest==True:
-        ax.scatter(y_actual,y_predict,s=4,c='b',alpha=0.5,label='RF Model vs Actual')
-    if hist_grad_regressor==True:
-        ax.scatter(y_actual,y_predict_hist,s=4,c='r',alpha=0.5,label='Hist Boost Regressor Model vs Actual')
-    if neural_net == True:
-        y_actual=y_val
-        y_predict=seq_model(X_val)
-        y_predict=y_predict.detach().numpy()
-        ax.scatter(y_actual,y_predict,s=4,c='r',alpha=0.5,label='Neural net Model vs Actual')    
-    ax.legend()
-    x=np.linspace(np.min(y_actual),np.max(y_actual),len(y_actual))
-    y=x
-    ax.set_xlim(0,np.max(y_actual))
-    ax.set_ylim(0,np.max(y_actual))
-    ax.plot(x,y,color='k',lw=0.5,ls='-')
-    ax.set_ylabel('Predicted duration of stay (days)')
-    ax.set_xlabel('Actual duration of stay (days)')
-    #plt.xlim(22,42)
-    #plt.ylim(0,300)
-    #plt.tight_layout(pad=0.2)
-    #plt.legend(fontsize='x-small',labelspacing=0.2,columnspacing=1)
-    plt.savefig('../plots/model_plot.png')
-    plt.show() 
+        '''Random forest regressor model training'''
+        print('Evaluating Random Forest')
+        model=evaluate_model(X,y,splits=10,repeats=20)
+        fitted_model=model[2]
+        y_actual=model[5]
+        X_test=model[4]
+        y_train=model[6]
+        X_train=model[7]
+        score=model[0]
+        score_sd=model[1]
+        loss_score=model[3]
+    
 
+        '''save the model'''
+        print('Saving model to file')
+        model_pth=os.path.join('random_forest_model.joblib')#can add joins to define a bespoke path to store models
+        joblib.dump(fitted_model,model_pth)
+
+        '''Test the model on data and print scores'''
+        print('opening model and testing')
+        loaded_model=joblib.load(model_pth)
+        y_predict=predict_data(X_test,loaded_model)
+        y_predict=[math.ceil(num) for num in y_predict]#push the predicted value to the ceiling integer
+        calculated_r2=r2_score(y_actual,y_predict)
+        print(f'R2 score is {calculated_r2} with cross validation score {score} with sd {score_sd} and MAE {loss_score}') 
+        residuals = y_actual - y_predict
+        # Calculate standard deviation of residuals 
+        n = len(y_actual)
+        mean_resid=np.sqrt(np.sum(residuals**2))/n
+        sd_resid=np.std(np.sqrt(residuals**2))
+        std_dev_residuals = np.sqrt(np.sum(residuals**2) / (n - X.shape[1]))
+        print('sd of residuals is ',std_dev_residuals)
+        print('calculated sd of residuals ', sd_resid, ' with mean ',mean_resid)
+        #with open('rf_result.txt', 'w') as file:
+        #     file.write([score,score_sd,loss_score])
+
+        '''find the most important variable sthat explain the model'''
+        r=permutation_importance(loaded_model,X_test,y_actual,n_repeats=20,random_state=11)
+        #print('mean importances',(r['importances_mean']))
+        max_importance_idx=(np.argmax(r['importances_mean']))
+        print('max importance idx',max_importance_idx)
+
+        sorted_idx=np.argsort(r['importances_mean'])
+
+        print('The most important variable is ',full_var_list[max_importance_idx])
+        for i,idx in enumerate(sorted_idx[:-10-1:-1]):#get the largest values in the arg sort
+            #idx=sorted_idx[i]
+            #print(idx)
+            print(f"The {i} most important variable is {full_var_list[idx]} with a mean of {r['importances_mean'][idx]} and sd {r['importances_std'][idx]}")
+            #with open('rf_result.txt') as file:
+            #    file.write('The'+ str(i) +'most important variable is '+full_var_list[idx] +'with a mean of '+str(r['importances_mean'][idx])+' and sd '+str(r['importances_std'][idx])+'\n')
+        
+    if neural_net==True:
+        print('Now training the nn model')
+        input_size = X.shape[1]
+        case_num=X.shape[0]
+        print(input_size,'input_size')
+        # Data preprocessing - standardizing the continuous features
+        print('scaling and masking cont vars')
+        continuous_mask = [True if i < cont_d else False for i in range(input_size)] # mask the continuous variables 
+        scaler = StandardScaler() 
+        X[:, continuous_mask] = torch.tensor(scaler.fit_transform(X[:, continuous_mask]))
+
+        # Splitting the data
+        print('splitting data')
+        X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
+        #print(X_train)
+        X_train=torch.tensor(X_train.astype(np.float32))# nn needs them as floats
+        X_val=torch.tensor(X_val.astype(np.float32))
+        y_train=torch.tensor(y_train.astype(np.float32))
+        y_val=torch.tensor(y_val.astype(np.float32))
+
+        print(X_train.dtype,'data type')
+
+        #create a sequential model
+        seq_model=nn.Sequential(nn.Linear(input_size, 128),
+                                nn.Linear(128, 256),
+                                nn.Linear(256, 128),
+                                nn.Linear(128, 64),
+                                nn.Linear(64, 32),
+                                nn.Linear(32, 1),
+                                nn.ReLU())
+
+
+        # Hyperparameters
+
+        lr = 0.001
+        n_epochs = 1000
+        model = seq_model
+        loss_fn = nn.MSELoss() # Loss function for continuous output 
+        optimizer = optim.Adam(model.parameters(),lr)
+
+
+        # Training the model 
+        print('training epochs')
+        training_loop(n_epochs,lr,optimizer,model,loss_fn,X_train,X_val,y_train,y_val)
+        print('output', seq_model(X_val))
+        print('answer',y_val)
+        
+            
+        print("Training complete.")
+
+        #Save the model
+        torch.save(model.state_dict(), 'my_model.pth')
+
+
+        # Load the model
+    # from model.pth import modelClass
+    # model=modelClass()
+    # model.load_state_dict(torch.load('model.pth'))
+        #loaded_model.eval() 
+
+        # Using the loaded model to make predictions
+        #new_data =torch.tensor(...) # Example new data 
+        #with torch.no_grad():
+        #    predictions = loaded_model(new_data)
+        #    print("Predicted duration of stay:\n", predictions)
+
+    if hist_grad_regressor==True:
+        print('Evaluating Histogram Gradient Boost Regressor')
+        cat_feat=np.zeros(X.shape[1],dtype=bool)#define an array the same size as all categories
+        cat_feat[cont_d+1:-1]=True#true for cat vars
+        model=evaluate_hist_model(X,y,splits=10,repeats=20,cat_feat=cat_feat)
+        fitted_model=model[2]
+        y_actual=model[5]
+        X_test=model[4]
+        y_train=model[6]
+        X_train=model[7]
+        score=model[0]
+        score_sd=model[1]
+        loss_score=model[3]
+        '''save the model'''
+        print('Saving model to file')
+        model_pth=os.path.join('new_hist_grad_boost_model.joblib')#can add joins to define a bespoke path to store models
+        joblib.dump(fitted_model,model_pth)
+
+        '''Test the model on data and print scores'''
+        print('opening model and testing')
+        loaded_model=joblib.load(model_pth)
+        y_predict_hist=predict_data(X_test,loaded_model)
+        y_predict_hist=[math.ceil(num) for num in y_predict_hist]#push the predicted value to the ceiling integer
+        calculated_r2=r2_score(y_actual,y_predict_hist)
+        print(f'R2 score is {calculated_r2} with cross validation score {score} with sd {score_sd} and MAE {loss_score}') 
+        residuals = y_actual - y_predict_hist
+        # Calculate standard deviation of residuals 
+        n = len(y_actual)
+        mean_resid=np.sqrt(np.sum(residuals**2))/n
+        sd_resid=np.std(np.sqrt(residuals**2))
+        std_dev_residuals = np.sqrt(np.sum(residuals**2) / (n - X.shape[1]))
+        print('sd of residuals is ',std_dev_residuals)
+        print('calculated sd of residuals ', sd_resid, ' with mean ',mean_resid)
+        #with open('hist_result.txt', 'w') as file:
+        #     file.write(score,score_sd,loss_score])
+        '''find the most important variable sthat explain the model'''
+        r=permutation_importance(loaded_model,X_test,y_actual,n_repeats=20,random_state=11)
+        #print('mean importances',(r['importances_mean']))
+        max_importance_idx=(np.argmax(r['importances_mean']))
+        print('max importance idx',max_importance_idx)
+
+        sorted_idx=np.argsort(r['importances_mean'])
+
+        print('The most important variable is ',full_var_list[max_importance_idx])
+        for i,idx in enumerate(sorted_idx[:-10-1:-1]):#get the largest values in the arg sort
+            #idx=sorted_idx[i]
+            #print(idx)
+            print(f"The {i} most important variable is {full_var_list[idx]} with a mean of {r['importances_mean'][idx]} and sd {r['importances_std'][idx]}")
+            #with open('hist_result.txt', 'w') as file:
+            # file.write('The'+ str(i) +'most important variable is '+full_var_list[idx] +'with a mean of '+str(r['importances_mean'][idx])+' and sd '+str(r['importances_std'][idx])+'\n')
+
+    if plot==True:
+        #Plots for information---------
+        
+        fig,ax=plt.subplots()
+        #array=np.array(clean_data_dict['duration_of_stay'])
+        #ax.scatter(clean_data_dict['gestation_days']/7,array,s=4,c='b',label='Gestation vs Duration of stay')
+        if rand_forest==True:
+            ax.scatter(y_actual,y_predict,s=4,c='b',alpha=0.5,label='RF Model vs Actual')
+        if hist_grad_regressor==True:
+            ax.scatter(y_actual,y_predict_hist,s=4,c='r',alpha=0.5,label='Hist Boost Regressor Model vs Actual')
+        if neural_net == True:
+            y_actual=y_val
+            y_predict=seq_model(X_val)
+            y_predict=y_predict.detach().numpy()
+            ax.scatter(y_actual,y_predict,s=4,c='r',alpha=0.5,label='Neural net Model vs Actual')    
+        ax.legend()
+        x=np.linspace(np.min(y_actual),np.max(y_actual),len(y_actual))
+        y=x
+        ax.set_xlim(0,np.max(y_actual))
+        ax.set_ylim(0,np.max(y_actual))
+        ax.plot(x,y,color='k',lw=0.5,ls='-')
+        ax.set_ylabel('Predicted duration of stay (days)')
+        ax.set_xlabel('Actual duration of stay (days)')
+        #plt.xlim(22,42)
+        #plt.ylim(0,300)
+        #plt.tight_layout(pad=0.2)
+        #plt.legend(fontsize='x-small',labelspacing=0.2,columnspacing=1)
+        plt.savefig('../plots/model_plot.png')
+        plt.show() 
+
+if __name__ == "__main__":
+    main()
 
 '''
 -----------------Descriptives of variables below-----------------------------------------------------------------------
