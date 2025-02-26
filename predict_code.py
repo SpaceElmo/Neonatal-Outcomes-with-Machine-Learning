@@ -196,7 +196,6 @@ def predict_dates(y_predict,data):
     return(new_dates_str,data['NationalIDBabyAnon'])
 
 #-------Variables------------------------------------------------------------------------------------------------
-'''These are the variable I could see as relevent. This is all variables from the data pull from badger'''
 variables=['BadgerUniqueID',
 'NationalIDBabyAnon',
 'EpisodeNumber',
@@ -353,8 +352,9 @@ verbose=False
 model_name='new_hist_grad_model.joblib'
 
 def main():
-    st.title ("Discharge date Calculator. This calculator predicts the date of discharge using the trained Model.\n The input dictionary can handle one baby at the moment as a pull from Badger.\n")
+    st.title ("<h1>Discharge date Calculator</h1>. \n This calculator predicts the date of discharge using the trained Model.\n")
     st.write("The categorical variables required are")
+    st.write(new_input_variables_cat)
     for var in new_input_variables_cat:
         st.write(var)
     st.write("The continuous variables required are")  
@@ -370,6 +370,8 @@ def main():
         except Exception as e:
             st.error("Error converting the input to a dictionary. Please ensure it is in the correct format.")
             st.error(e)
+    else:
+        st.write("Awaiting Input")        
     data=read_input(csv_file)
     if len(data)==0:
         st.error('No valid cases were identified. Please retry')
@@ -388,3 +390,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+#run streamlit using python -m streamlit run code.py
