@@ -721,7 +721,7 @@ def main():
     hist_grad_regressor=True
     neural_net=False
     plot=True
-    simple_model=True
+    simple_model=False
 
     if rand_forest==True:
         '''Random forest regressor model training'''
@@ -895,7 +895,7 @@ def main():
 
     if simple_model==True:#model that simply predicts discharge day as Term
         y_actual_simple=clean_data_dict['duration_of_stay']
-        y_predict_simple=36.5*7-clean_data_dict['gestation_days']
+        y_predict_simple=37*7-clean_data_dict['gestation_days']
 
 
     if plot==True:
@@ -913,7 +913,14 @@ def main():
             ax.scatter(y_actual,y_predict,s=4,c='b',alpha=0.5,label='RF Model vs Actual')
         if hist_grad_regressor==True:
             mod_type='histgrad'
-            ax.scatter(y_actual,y_predict_hist,s=4,c='r',alpha=0.5,label='Hist Boost Regressor Model vs Actual')
+            data = pd.DataFrame({
+            'y_actual': y_actual,
+            'y_predict': y_predict_hist
+            })
+            sns.regplot(data=data,y="y_actual",x='y_predict',ax=ax,line_kws={'color':'blue'},scatter_kws={'alpha':0.5,'color':'blue','s':5},ci=95,order=1,x_estimator=np.median)
+            #ax.scatter(y_actual_simple,y_predict_simple,s=4,c='green',alpha=0.5,label='Simplistic Model vs Actual') 
+            ax.set_title('Hist Grad Boost model plot (95% CI)')
+            #ax.scatter(y_actual,y_predict_hist,s=4,c='r',alpha=0.5,label='Hist Boost Regressor Model vs Actual')
         if neural_net == True:
             mod_type='nn'
             y_actual=y_val
@@ -922,21 +929,28 @@ def main():
             ax.scatter(y_actual,y_predict,s=4,c='r',alpha=0.5,label='Neural net Model vs Actual')   
         if simple_model==True:
             mod_type='simple'
-            ax.scatter(y_actual_simple,y_predict_simple,s=4,c='green',alpha=0.5,label='Simplistic Model vs Actual') 
+            data = pd.DataFrame({
+            'y_actual': y_actual_simple,
+            'y_predict': y_predict_simple
+            })
+            sns.regplot(data=data,y="y_actual",x='y_predict',ax=ax,line_kws={'color':'darkgreen'},scatter_kws={'alpha':0.5,'color':'green','s':5},ci=95,order=1,x_estimator=np.median)
+            #ax.scatter(y_actual_simple,y_predict_simple,s=4,c='green',alpha=0.5,label='Simplistic Model vs Actual') 
+            ax.set_title('Gestation only model plot (95% CI)')
 
         ax.legend()
-        x=np.linspace(np.min(y_actual),np.max(y_actual),len(y_actual))
+        x=np.linspace(0,np.max(data['y_actual']),len(data['y_actual']))
         y=x
-        ax.set_xlim(0,np.max(y_actual))
-        ax.set_ylim(0,np.max(y_actual))
+        ax.set_xlim(0,np.max(data['y_actual']))
+        ax.set_ylim(0,np.max(data['y_actual']))
         ax.plot(x,y,color='k',lw=0.5,ls='-')
-        ax.set_ylabel('Predicted duration of stay (days)')
-        ax.set_xlabel('Actual duration of stay (days)')
+        ax.set_xlabel('Predicted duration of stay (days)')
+        ax.set_ylabel('Actual duration of stay (days)')
+        
         #plt.xlim(22,42)
         #plt.ylim(0,300)
         #plt.tight_layout(pad=0.2)
         #plt.legend(fontsize='x-small',labelspacing=0.2,columnspacing=1)
-        plt.savefig('../plots/model_plot_'+mod_type+'.png')
+        plt.savefig('../plots/model_plot_'+mod_type+'.png',dpi=1200)
         plt.show() 
 
 if __name__ == "__main__":
