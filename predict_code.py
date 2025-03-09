@@ -299,7 +299,7 @@ string_variables=['Sex','BadgerUniqueID','NationalIDBabyAnon','HeadScanFirstResu
 
 new_variables=['duration_of_stay','gestation_days']
 
-orig_input_variables_cat=['EpisodeNumber',#these are the variables used for yje poster but they contain paameters that can only be known at discharge. 
+orig_input_variables_cat=['EpisodeNumber',#these are the variables used for the poster but they contain paameters that can only be known at discharge. 
 'Readmission',
 'BirthOrder',
 'DischargeDestination',
@@ -352,9 +352,9 @@ verbose=False
 model_name='new_hist_grad_model.joblib'
 
 def main():
-    st.title ("<h1>Discharge date Calculator</h1>. \n This calculator predicts the date of discharge using the trained Model.\n")
+    st.title ("Discharge date Calculator")
+    st.write("<h2>This calculator predicts the date of discharge using the trained Model</h2>")
     st.write("The categorical variables required are")
-    st.write(new_input_variables_cat)
     for var in new_input_variables_cat:
         st.write(var)
     st.write("The continuous variables required are")  
@@ -391,4 +391,4 @@ def main():
 if __name__ == "__main__":
     main()
 
-#run streamlit using python -m streamlit run code.py
+#run streamlit using python -m streamlit run predict_code.py

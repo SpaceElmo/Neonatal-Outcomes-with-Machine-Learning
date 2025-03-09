@@ -423,7 +423,7 @@ def main():
 
     new_variables=['duration_of_stay','gestation_days']
 
-    orig_input_variables_cat=['EpisodeNumber',#these are the variables used for yje poster but they contain paameters that can only be known at discharge. 
+    orig_input_variables_cat=['EpisodeNumber',#these are the variables used for the poster but they contain paameters that can only be known at discharge. 
     'Readmission',
     'BirthOrder',
     'DischargeDestination',
@@ -721,6 +721,7 @@ def main():
     hist_grad_regressor=True
     neural_net=False
     plot=True
+    simple_model=True
 
     if rand_forest==True:
         '''Random forest regressor model training'''
@@ -892,21 +893,37 @@ def main():
             #with open('hist_result.txt', 'w') as file:
             # file.write('The'+ str(i) +'most important variable is '+full_var_list[idx] +'with a mean of '+str(r['importances_mean'][idx])+' and sd '+str(r['importances_std'][idx])+'\n')
 
+    if simple_model==True:#model that simply predicts discharge day as Term
+        y_actual_simple=clean_data_dict['duration_of_stay']
+        y_predict_simple=36.5*7-clean_data_dict['gestation_days']
+
+
     if plot==True:
         #Plots for information---------
         
         fig,ax=plt.subplots()
+        #ax.set_ylim(0,np.max(y_actual))
+        #coefficients=np.polyfit(clean_data_dict['gestation_days'],clean_data_dict['duration_of_stay'],1)
+        #best_fit_line=np.polyval(coefficients,clean_data_dict['gestation_days'])
+        #ax.plot(clean_data_dict['gestation_days'],best_fit_line,color='k')
         #array=np.array(clean_data_dict['duration_of_stay'])
         #ax.scatter(clean_data_dict['gestation_days']/7,array,s=4,c='b',label='Gestation vs Duration of stay')
         if rand_forest==True:
+            mod_type='rand_for'
             ax.scatter(y_actual,y_predict,s=4,c='b',alpha=0.5,label='RF Model vs Actual')
         if hist_grad_regressor==True:
+            mod_type='histgrad'
             ax.scatter(y_actual,y_predict_hist,s=4,c='r',alpha=0.5,label='Hist Boost Regressor Model vs Actual')
         if neural_net == True:
+            mod_type='nn'
             y_actual=y_val
             y_predict=seq_model(X_val)
             y_predict=y_predict.detach().numpy()
-            ax.scatter(y_actual,y_predict,s=4,c='r',alpha=0.5,label='Neural net Model vs Actual')    
+            ax.scatter(y_actual,y_predict,s=4,c='r',alpha=0.5,label='Neural net Model vs Actual')   
+        if simple_model==True:
+            mod_type='simple'
+            ax.scatter(y_actual_simple,y_predict_simple,s=4,c='green',alpha=0.5,label='Simplistic Model vs Actual') 
+
         ax.legend()
         x=np.linspace(np.min(y_actual),np.max(y_actual),len(y_actual))
         y=x
@@ -919,7 +936,7 @@ def main():
         #plt.ylim(0,300)
         #plt.tight_layout(pad=0.2)
         #plt.legend(fontsize='x-small',labelspacing=0.2,columnspacing=1)
-        plt.savefig('../plots/model_plot.png')
+        plt.savefig('../plots/model_plot_'+mod_type+'.png')
         plt.show() 
 
 if __name__ == "__main__":
