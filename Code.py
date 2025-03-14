@@ -917,10 +917,10 @@ def main():
             'y_actual': y_actual,
             'y_predict': y_predict_hist
             })
-            sns.regplot(data=data,y="y_actual",x='y_predict',ax=ax,line_kws={'color':'blue'},scatter_kws={'alpha':0.5,'color':'blue','s':5},ci=95,order=1,x_estimator=np.median)
-            #ax.scatter(y_actual_simple,y_predict_simple,s=4,c='green',alpha=0.5,label='Simplistic Model vs Actual') 
-            ax.set_title('Hist Grad Boost model plot (95% CI)')
-            #ax.scatter(y_actual,y_predict_hist,s=4,c='r',alpha=0.5,label='Hist Boost Regressor Model vs Actual')
+            #sns.regplot(data=data,y="y_actual",x='y_predict',ax=ax,line_kws={'color':'blue'},scatter_kws={'alpha':0.5,'color':'blue','s':5},ci=95,order=1,x_estimator=np.median)
+            mod_type='histgrad_scatter'
+            ax.set_title('Hist Grad Boost model plot')
+            ax.scatter(y_predict_hist,y_actual,s=4,c='blue',alpha=0.5,label='Hist Boost Regressor Model vs Actual')
         if neural_net == True:
             mod_type='nn'
             y_actual=y_val
