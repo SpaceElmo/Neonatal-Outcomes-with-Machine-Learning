@@ -18,8 +18,11 @@ from io import StringIO
 
 #======Functions===========================================================================
 def read_input(csv_file):
-    '''Reads the csv and converts to a dict list and then applies the exclusion criteria. returns the list of dicts'''
-    data= noml.csv_to_dict(csv_file) #create a list of dicts of all episodes. May contain multiple copies of baby.
+    '''Reads the uploaded csv file and converts to a dict list and then applies the exclusion criteria. returns the list of dicts'''
+    file_contents=StringIO(csv_file.getvalue().decode("utf-8"))
+       
+    csv_reader = csv.DictReader(file_contents,dialect='excel') 
+    data = [row for row in csv_reader] 
     print('Applying exclusion criteria')
     exclude_gest=['22','23','24','25','26','36','37','38','39','40']#exclude all episodes of these birth gestation
     for i,case in enumerate(data):
@@ -362,29 +365,25 @@ def main():
          st.write(var)
     st.write('Birthdate and Anonymous ID is also required')
     st.write('Only 27+0 to 35+6 week gestation babies can be considered')
-    csv_input = st.text_area("Input your csv here as a text string):")
+    csv_input = st.file_uploader("Upload your csv here",type='csv')
     if csv_input:
-        try:
-            csv_file = StringIO(csv_input)
-            st.write("Converted csv. Now converting to dict:")
-        except Exception as e:
-            st.error("Error converting the input to a dictionary. Please ensure it is in the correct format.")
-            st.error(e)
+        data=read_input(csv_input)
+        st.write(data)
+        if len(data)==0:
+            st.error('No valid cases were identified. Please retry')
+        else:
+            input_vars=data[0].keys
+            st.write(input_vars)
+            cleaned_data=clean_data(data,input_vars)
+            processed_data=pre_process(cleaned_data,input_vars)
+            X=make_input_array(processed_data)
+            y_predict=load_model(model_name,X)
+            predicted_dates,babyIDanon=predict_dates(y_predict,processed_data)
+            for i,date in enumerate(predicted_dates):
+                st.write(f'predicted discharge date for {babyIDanon[i]} is {date}') 
     else:
-        st.write("Awaiting Input")        
-    data=read_input(csv_file)
-    if len(data)==0:
-        st.error('No valid cases were identified. Please retry')
-        st.error(e)
-    else:
-        input_vars=data[0].keys
-        cleaned_data=clean_data(data)
-        processed_data=pre_process(cleaned_data,input_vars)
-        X=make_input_array(processed_data)
-        y_predict=load_model(model_name,X)
-        predicted_dates,babyIDanon=predict_dates(y_predict,processed_data)
-        for i,date in enumerate(predicted_dates):
-            st.write(f'predicted discharge date for {babyIDanon[i]} is {date}') 
+        st.write("Awaiting file")        
+    
 
 
 
