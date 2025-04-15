@@ -1,10 +1,4 @@
-#Import CSV as lists or get them from a cloud
-#Inputs:Gest,gender, birth type, Golden hour values, Antenatal temp,PROM,antenatal steroids,GBS,CPAP hours,Vent hours, No of surfactant doses, NEC, Sepsis,Meningitis, Social care involvemnet, O2 hours, highest IVH grade
-#outputs Bayleys at 2 years, GMFCS at 5 years, Community paeds referral at 10 years, SALT at 5 years, ASD or ADHD at 10 years. Discharge time
-#Test output discharge date
-#Create a model using pytorch CNN?
-#Create a model using Random Forest
-#Output the model on streamlit to allow you to enter parameters and predict outcomes
+'''This is the main code that generates a model based on training data. Model is stored in the local folder'''
 import pandas as pd
 import numpy as np
 import torch
@@ -33,22 +27,6 @@ import requests
 from supabase import create_client, Client
 import csv
 from datetime import datetime
-
-def get_table(table_name):
-    '''This function is written to pull databases from supabase as dicts. Uses API- do not run in a loop'''
-    #remember to replace this with an ascii read or something similar when uploading to git hub
-    SUPABASE_API_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJlcmp6d3RnbW1kZndwam1yamhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzIyNzI5NDQsImV4cCI6MjA0Nzg0ODk0NH0.M0uAY88kNI6sm2OtgYlkxFvDZVE6yMwyDN_2ZWAxxBk"
-    SUPABASE_URL= "https://berjzwtgmmdfwpjmrjhm.supabase.co"  
-    #create a client
-    supabase: Client=create_client(SUPABASE_URL,SUPABASE_API_KEY)
-    #fetch data
-    #this selects all the rows * from the table
-
-    response=supabase.table(table_name).select("*").execute()
-    #returns data as a list of dicts with each dict being a record
-    return(response.data)
-    #else:
-    #return {"error": r.error}
 
 def csv_to_dict(file_path):
     with open(file_path, newline='',mode='r') as file:

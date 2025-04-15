@@ -167,7 +167,8 @@ def make_input_array(data):
     print('cat var length',len(new_input_variables_cat))
     twodarray_list=[]
     for var in (new_input_variables_cont+new_input_variables_cat):#note that this is the var order. The cat vars will have a category order also. 
-        variable=data[var]
+        variable=np.array(data[var])
+        print(variable)
         if variable.ndim==1:
             twodvar=variable.reshape(-1,1)#convert all arrays to 2 d and hstack them columnwise.
         else:
@@ -352,31 +353,32 @@ new_input_variables_cont=['AdmitTemperature','BirthHeadCircumference','AdmitBloo
 
 verbose=False
 
-model_name='new_hist_grad_model.joblib'
+model_name='new_hist_grad_boost_model.joblib'
 
 def main():
     st.title ("Discharge date Calculator")
-    st.write("<h2>This calculator predicts the date of discharge using the trained Model</h2>")
-    st.write("The categorical variables required are")
-    for var in new_input_variables_cat:
-        st.write(var)
-    st.write("The continuous variables required are")  
-    for var in new_input_variables_cont:
-         st.write(var)
+    st.write("This calculator predicts the date of discharge using the trained Model")
+    #st.write("The categorical variables required are")
+    #for var in new_input_variables_cat:
+    #    st.write(var)
+    #st.write("The continuous variables required are")  
+    #for var in new_input_variables_cont:
+    #     st.write(var)
     st.write('Birthdate and Anonymous ID is also required')
     st.write('Only 27+0 to 35+6 week gestation babies can be considered')
     csv_input = st.file_uploader("Upload your csv here",type='csv')
     if csv_input:
         data=read_input(csv_input)
-        st.write(data)
+        st.write(len(data))
         if len(data)==0:
             st.error('No valid cases were identified. Please retry')
         else:
-            input_vars=data[0].keys
+            input_vars=data[0].keys()
             st.write(input_vars)
             cleaned_data=clean_data(data,input_vars)
             processed_data=pre_process(cleaned_data,input_vars)
             X=make_input_array(processed_data)
+            print(X.shape)
             y_predict=load_model(model_name,X)
             predicted_dates,babyIDanon=predict_dates(y_predict,processed_data)
             for i,date in enumerate(predicted_dates):
