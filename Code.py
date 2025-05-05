@@ -27,6 +27,7 @@ import requests
 from supabase import create_client, Client
 import csv
 from datetime import datetime
+import pickle
 
 def csv_to_dict(file_path):
     with open(file_path, newline='',mode='r') as file:
@@ -284,8 +285,7 @@ def training_loop(n_epochs,lr,optimizer,model,loss_fn,X_train,X_val,y_train,y_va
         if epoch==1 or epoch % 100 ==0:
             print(f"Epoch {epoch} , Training loss {loss_train.item():.4f},"f"Validation loss {loss_val.item():.4f}")
         
- 
- 
+
 
 def main():
 
@@ -297,7 +297,7 @@ def main():
 
 
     #-------Variables------------------------------------------------------------------------------------------------
-    '''These are the variable I could see as relavent'''
+    '''These are the variable I could see as relavent. Do not change order of variables'''
     variables=['BadgerUniqueID',
     'NationalIDBabyAnon',
     'EpisodeNumber',
@@ -686,19 +686,30 @@ def main():
     for variable in (input_variables_cont):
         full_var_list.append(variable)
     for variable in (input_variables_cat):
-        #print(variable)
-        #print(clean_data_dict[variable+'_classes'])
-        num_cat=len(clean_data_dict[variable+'_classes'][0])
-        for _ in range(num_cat):
-            full_var_list.append(variable)
+        print(variable)
+        for category in clean_data_dict[variable+'_classes']:
+            for val in category:
+                full_var_list.append(val)
+        #print('class names are', clean_data_dict[variable+'_classes'])
+        #num_cat=len(clean_data_dict[variable+'_classes'][0])
+        #for _ in range(num_cat):
+        #    full_var_list.append(variable)
     print('length of the input var list labels',len(full_var_list))
+    print('The list is',full_var_list)
+    
+    '''save clean dict locally as a json so that predict code can access it.'''
+    with open("../data/clean_data_dict.pkl","wb") as file:
+        pickle.dump(clean_data_dict,file) 
+
+
+
 
 
     '''select the model'''
     rand_forest=False
     hist_grad_regressor=True
     neural_net=False
-    plot=True
+    plot=False
     simple_model=False
 
     if rand_forest==True:
@@ -833,6 +844,7 @@ def main():
         score=model[0]
         score_sd=model[1]
         loss_score=model[3]
+        print('X test shape ', X_test.shape)
         '''save the model'''
         print('Saving model to file')
         model_pth=os.path.join('new_hist_grad_boost_model.joblib')#can add joins to define a bespoke path to store models
@@ -933,6 +945,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 '''
 -----------------Descriptives of variables below-----------------------------------------------------------------------

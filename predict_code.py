@@ -15,6 +15,9 @@ import Code as noml
 import streamlit as st
 import ast
 from io import StringIO
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.preprocessing import MultiLabelBinarizer
+import pickle
 
 #======Functions===========================================================================
 def read_input(csv_file):
@@ -57,7 +60,7 @@ def read_input(csv_file):
         return([])
 
 
-def clean_data(data,input_vars):#need to confirm how girish wants the input variables inserted. This way should be agnostic of which vars are chosen
+def clean_data(data,input_vars):# This way should be agnostic of which vars are chosen
     '''Convert dict list data to a dict of values and then clean the data and get the list f birth times and gestations. Returns clean data dict and needs input vars as second arg'''
     print('Converting to list of vals')
     data_dict={}
@@ -66,32 +69,32 @@ def clean_data(data,input_vars):#need to confirm how girish wants the input vari
         data_dict.update({keyname:vals})
     #print(data_dict['GestationWeeks'])    
 
-    '''Now clean the data -Convert gestation to days val. Get the discharge time. Convert to ints or floats or lists where appropriate. Replace missing vals. '''
+    #Now clean the data -Convert gestation to days val. Get the discharge time. Convert to ints or floats or lists where appropriate. Replace missing vals.
 
     print('Cleaning data')
     clean_data_dict={}
     for variable in int_variables:
         for var in input_vars:
             if variable==var:
-                #print(variable)
+                print(f'cleaning {variable}')
                 int_vals=noml.convert_to_int(data_dict[variable])
                 clean_data_dict.update({variable:int_vals})
     for variable in float_variables+float_variables_zero:
         for var in input_vars:
             if variable==var:
-                #print(variable)
+                print(f'cleaning {variable}')
                 float_vals=noml.convert_to_float(data_dict[variable])
                 clean_data_dict.update({variable:float_vals})
     for variable in list_variables:
         for var in input_vars:
             if variable==var:
-                #print(variable)
+                print(f'cleaning {variable}')
                 list_vals=noml.convert_to_list(data_dict[variable])
                 clean_data_dict.update({variable:list_vals})
     for variable in list_variables_str:
         for var in input_vars:
             if variable==var:
-                 #print(variable)
+                 print(f'cleaning {variable}')
                  list_vals=noml.convert_to_str_list(data_dict[variable])
                  clean_data_dict.update({variable:list_vals})   
     for variable in string_variables:
@@ -114,42 +117,70 @@ def clean_data(data,input_vars):#need to confirm how girish wants the input vari
     return(clean_data_dict)
 
 def pre_process(data,input_vars):
-    '''Pre pocess data ie one hot encoding where necessary. Input data must be a dict. second arg is input vars. returns preprocessed data'''
-    '''Now preprocess the data - one hot encoding and replace missing vals with median or 0. Store the category orders somewhere'''
+    #Pre pocess data ie one hot encoding where necessary. Input data must be a dict. second arg is input vars. returns preprocessed data'''
+    #Now preprocess the data - one hot encoding and replace missing vals with median or 0. Hd to re-write as needs the encoded shape fro 
+    #the model to define all classes when encoding, otherwise output X shape is wrong'''
 
-    print('Preprocessing data')
-    #print(clean_data_dict['ProblemsPregnancyMother'])
-    #print(encode_list(clean_data_dict['ProblemsPregnancyMother'],verbose=True))
+    print('Preprocessing data and opening classes data from model')
+    #open the clean data dict json to access the classes. 
+    # This prevents a dimension mismatch between the predict input and model
+
+    with open("../data/clean_data_dict.pkl","rb") as file:
+        clean_data_dict=pickle.load(file)
+
+    
     for variable in list_variables+list_variables_str:
         for var in input_vars:
             if variable==var:
-                print('encoding '+variable)
-                encoded_array=noml.encode_list(data[variable],verbose=verbose)
+                print('encoding list '+variable)
+                all_classes=[]
+                classes_array=clean_data_dict['encoded_'+variable+'_classes'][0]
+                for val in classes_array:
+                    all_classes.append(val)
+                #print('data extracted',all_classes)
+                mlb=MultiLabelBinarizer(classes=all_classes)
+                encoded_array=mlb.fit_transform(data[variable])
+                #encoded_array=noml.encode_list(data[variable],verbose=verbose)
                 #print(encoded_array[0],'classes',encoded_array[1])
-                data.update({'encoded_'+variable:encoded_array[0]})#get the values
-                data.update({'encoded_'+variable+'_classes':encoded_array[1]})#get the one hot encoded categories too
+                data.update({'encoded_'+variable:encoded_array})#get the values
+                #data.update({'encoded_'+variable+'_classes':encoded_array[1]})#get the one hot encoded categories too
     for variable in int_variables+string_variables:
         for var in input_vars:
+            if var=='BadgerUniqueID':#need to exclude these from encoding
+                continue
+            if var=='NationalIDBabyAnon':
+                continue
             if variable==var:
-                print('encoding '+variable)
-                encoded_array=noml.encode_int(data[variable],verbose=verbose)
-                #print(encoded_array[0],'classes',encoded_array[1])
+                print('encoding int or str '+variable)
+                #print(data[variable])
+                all_classes=[]
+                classes_array=clean_data_dict['encoded_'+variable+'_classes'][0]
+                for val in classes_array:
+                    all_classes.append(val)
+                #print('data extracted',all_classes)
+                encoder=OneHotEncoder(sparse_output=False,categories=[all_classes])
+                twodarray=(data[variable]).reshape(-1,1)   
+                #print('2d array',twodarray)
+                encoded_array=encoder.fit_transform(twodarray)
+                #encoded_array=noml.encode_int(data[variable],verbose=verbose)
+                #print('encoded array',encoded_array)
                 data.update({'encoded_'+variable:encoded_array[0]})
-                data.update({'encoded_'+variable+'_classes':encoded_array[1]})  
+                #data.update({'encoded_'+variable+'_classes':encoded_array[1]})  
 
     for variable in float_variables+new_variables:#replace missing values in floats with median
         for var in input_vars:
             if variable==var:
-                print('cleaning '+variable)
+                print('replacing missing vals in '+variable)
                 median_val=np.nanmedian(data[variable])
+                if np.isnan(median_val):
+                    median_val=0
                 for i,val in enumerate(data[variable]):
                     if np.isnan(val):
                         data[variable][i]=median_val
     for variable in float_variables_zero:#replace missing values in floats with 0
         for var in input_vars:
             if variable==var:
-                print('cleaning '+variable)
-                median_val=np.nanmedian(data[variable])
+                print('replacing missing vals in '+variable)
                 for i,val in enumerate(data[variable]):
                     if np.isnan(val):
                         data[variable][i]=0
@@ -158,22 +189,30 @@ def pre_process(data,input_vars):
 
 def make_input_array(data):
     '''Convert the data to an input array that the model can use to predict y. Input is clean data dict with encoded variables. Returns X'''
-    zero_d=len(data['NationalIDBabyAnon'])
-    one_d= len(new_input_variables_cont)+len(new_input_variables_cat)
-    cont_d=len(new_input_variables_cont)
-    cat_d=len(new_input_variables_cat)
     print('variable length',len(variables))
     print('cont var length',len(new_input_variables_cont))
     print('cat var length',len(new_input_variables_cat))
     twodarray_list=[]
-    for var in (new_input_variables_cont+new_input_variables_cat):#note that this is the var order. The cat vars will have a category order also. 
+    for var in (new_input_variables_cont):#+new_input_variables_cat):#note that this is the var order. The cat vars will have a category order also. 
         variable=np.array(data[var])
-        print(variable)
         if variable.ndim==1:
-            twodvar=variable.reshape(-1,1)#convert all arrays to 2 d and hstack them columnwise.
+            twodvar=variable.reshape(1,-1)#convert all arrays to 2 d and hstack them columnwise.
         else:
             twodvar=variable
+        print('appending variable', var,'shape ',twodvar.shape)    
         twodarray_list.append(twodvar)
+        
+    for var in (new_input_variables_cat):
+        variable = np.array(data['encoded_'+var])
+        if variable.ndim==1:
+            twodvar=variable.reshape(1,-1)#convert all arrays to 2 d and hstack them columnwise.
+        else:
+            twodvar=variable
+        print('appending variable', var,'shape ',twodvar.shape)    
+        twodarray_list.append(twodvar)
+
+    #print('2d array list', twodarray_list)
+    print('Stacking')
     input_array=np.hstack(twodarray_list)
     X=input_array    
     print('X shape',X.shape)
@@ -369,20 +408,20 @@ def main():
     csv_input = st.file_uploader("Upload your csv here",type='csv')
     if csv_input:
         data=read_input(csv_input)
-        st.write(len(data))
-        if len(data)==0:
+        st.write(len(data[0]))
+        if len(data[0])==0:
             st.error('No valid cases were identified. Please retry')
         else:
             input_vars=data[0].keys()
-            st.write(input_vars)
+            st.write('The input variables are being processed')
             cleaned_data=clean_data(data,input_vars)
             processed_data=pre_process(cleaned_data,input_vars)
             X=make_input_array(processed_data)
-            print(X.shape)
+            print(X)
             y_predict=load_model(model_name,X)
             predicted_dates,babyIDanon=predict_dates(y_predict,processed_data)
             for i,date in enumerate(predicted_dates):
-                st.write(f'predicted discharge date for {babyIDanon[i]} is {date}') 
+                st.write(f'Predicted discharge date for BadgerAnon ID {babyIDanon[i]} is {date}') 
     else:
         st.write("Awaiting file")        
     
