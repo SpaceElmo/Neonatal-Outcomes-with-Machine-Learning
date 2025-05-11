@@ -35,15 +35,26 @@ def csv_to_dict(file_path):
         data = [row for row in csv_reader] 
         return data
 
-    
+def parse_date(date_str):
+    formats = ["%d/%m/%Y %H:%M","%d-%b-%y"]
+    for fmt in formats:
+        #print(date_str,fmt)
+        try:
+            #print(datetime.strptime(date_str,fmt))
+            return datetime.strptime(date_str,fmt)
+        except:
+            print('Error in date found', date_str,fmt)
+            continue
+
 
 def days_difference(date1, date2):
-    '''date1 is the earlier time to generate a positive number. Must be positive. If a value is missing will generate None'''
-    date_format = "%d/%m/%Y %H:%M" 
+    '''date1 is the earlier time to generate a positive number. Must be positive. If a value is missing will generate None''' 
     #print(date1,date2)
     if date1 and date2:
-        d1 = datetime.strptime(date1, date_format) 
-        d2 = datetime.strptime(date2, date_format)
+        d1 = parse_date(date1)
+        #print(d1,"date 1")
+        d2 = parse_date(date2)
+        #print(d2,"date 2")
         delta = d2 - d1 
         return float(delta.days)
     else:
@@ -479,7 +490,7 @@ def main():
 
     #print(remainder)
     #for key in remainder:
-    #    print(key,data[0][key])
+     #   print(key,data[0][key])
 
 
 
@@ -521,8 +532,9 @@ def main():
     max_stay=float(100)#exclude cases that have a min or max stay
     min_stay=float(1) 
     for i,case in enumerate(data):
+        #print('Birthtime',case['BirthTimeBaby'],'Dischtime',case['DischTime'],case['NationalIDBabyAnon'])
         duration=days_difference(case['BirthTimeBaby'],case['DischTime'])
-        #print(duration)
+        #print('duration is', duration)
         if duration is None:
             del data[i]
             continue
@@ -709,7 +721,7 @@ def main():
     rand_forest=False
     hist_grad_regressor=True
     neural_net=False
-    plot=False
+    plot=True
     simple_model=False
 
     if rand_forest==True:
