@@ -408,7 +408,7 @@ def main():
     st.write('Include all variables from a Badger download EXCEPT patient identifiable data')
     st.write('Only 27+0 to 35+6 week gestation babies can be considered')
     st.write('Please test initially with one case at a time. Email any issues to me at (raman.sharma1@nhs.net)')
-    st.write('The raw code is available to fork at (https://github.com/SpaceElmo/Neonatal-Outcomes-by-Machine-Learning) ')
+    st.write('The raw code is available to fork at (https://github.com/SpaceElmo/Neonatal-Outcomes-with-Machine-Learning) ')
     csv_input = st.file_uploader("Upload your csv here",type='csv')
     if csv_input:
         data=read_input(csv_input)
