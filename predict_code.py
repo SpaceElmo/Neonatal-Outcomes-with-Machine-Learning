@@ -125,7 +125,7 @@ def pre_process(data,input_vars):
     #open the clean data dict json to access the classes. 
     # This prevents a dimension mismatch between the predict input and model
 
-    with open(r"D:\Work\NOML\data\clean_data_dict.pkl","rb") as file:
+    with open(r"D:\Work\NOML\code\clean_data_dict.pkl","rb") as file:
         clean_data_dict=pickle.load(file)
 
     

@@ -742,7 +742,7 @@ def main():
     #print('The list is',full_var_list)
     
     '''save clean dict locally as a json so that predict code can access it.'''
-    with open(r"D:\Work\NOML\data\clean_data_dict.pkl","wb") as file:
+    with open(r"D:\Work\NOML\code\clean_data_dict.pkl","wb") as file:
         pickle.dump(clean_data_dict,file) 
 
 
@@ -891,7 +891,7 @@ def main():
         print('X test shape ', X_test.shape)
         '''save the model'''
         print('Saving model to file')
-        model_pth=os.path.join('new_hist_grad_boost_model.joblib')#can add joins to define a bespoke path to store models
+        model_pth=os.path.join(r"D:\Work\NOML\code\new_hist_grad_boost_model.joblib")#can add joins to define a bespoke path to store models
         joblib.dump(fitted_model,model_pth)
 
         '''Test the model on data and print scores'''
