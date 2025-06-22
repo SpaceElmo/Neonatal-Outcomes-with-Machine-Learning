@@ -213,7 +213,7 @@ def encode_int(array,verbose=False):
     encoded_array=encoder.fit_transform(twodarray)
     if verbose:
         print('encoded shape is ',encoded_array.shape)
-        print('encoded categories are ',encoder.fit(twodarray).categories_)
+        #print('encoded categories are ',encoder.fit(twodarray).categories_)
     classes=encoder.fit(twodarray).categories_   
     return (encoded_array,classes)    
 
@@ -224,7 +224,7 @@ def encode_list(array,verbose=False):
     encoded_array=mlb.fit_transform(array)
     if verbose:
         print('encoded shape is ',encoded_array.shape)
-        print('encoded categories are ',mlb.fit(array).classes_)  
+        #print('encoded categories are ',mlb.fit(array).classes_)  
     classes.append(mlb.fit(array).classes_)      
     return (encoded_array,classes)
        
@@ -604,7 +604,7 @@ def main():
     print('Cleaning data')
     clean_data_dict={}
     for variable in int_variables:
-        print(variable)
+        #print(variable)
         int_vals=convert_to_int(data_dict[variable])
         clean_data_dict.update({variable:int_vals})
     for variable in float_variables+float_variables_zero:
@@ -663,26 +663,26 @@ def main():
     #print(clean_data_dict['ProblemsPregnancyMother'])
     #print(encode_list(clean_data_dict['ProblemsPregnancyMother'],verbose=True))
     for variable in list_variables+list_variables_str:
-        print('encoding '+variable)
+        #print('encoding '+variable)
         encoded_array=encode_list(clean_data_dict[variable],verbose=verbose)
         #print(encoded_array[0],'classes',encoded_array[1])
         clean_data_dict.update({'encoded_'+variable:encoded_array[0]})#get the values
         clean_data_dict.update({'encoded_'+variable+'_classes':encoded_array[1]})#get the one hot encoded categories too
     for variable in int_variables+string_variables:
-        print('encoding '+variable)
+        #print('encoding '+variable)
         encoded_array=encode_int(clean_data_dict[variable],verbose=verbose)
         print(encoded_array[0],'classes',encoded_array[1])
         clean_data_dict.update({'encoded_'+variable:encoded_array[0]})
         clean_data_dict.update({'encoded_'+variable+'_classes':encoded_array[1]})  
 
     for variable in float_variables+new_variables:#replace missing values in floats with median
-        print('cleaning '+variable)
+        #print('cleaning '+variable)
         median_val=np.nanmedian(clean_data_dict[variable])
         for i,val in enumerate(clean_data_dict[variable]):
             if np.isnan(val):
                 clean_data_dict[variable][i]=median_val
     for variable in float_variables_zero:#replace missing values in floats with 0
-        print('cleaning '+variable)
+        #print('cleaning '+variable)
         median_val=np.nanmedian(clean_data_dict[variable])
         for i,val in enumerate(clean_data_dict[variable]):
             if np.isnan(val):
@@ -728,11 +728,13 @@ def main():
     print('y shape',y.shape)
     full_class_dict={}#label the columns in the input array with teh appropriate category for later analysis. cat names are repeated if the encoding is in the same cat
     #for variable in (input_variables_cont):
-    #    full_var_list.update({variable:variable})
+    #    full_var_list.update({variable:variable})#
+    print('Getting class lists to pickle')
     for variable in (input_variables_cat):
         print(variable)
         for category in clean_data_dict[variable+'_classes']:
             for val in category:
+                print(variable,": ",val)
                 full_class_dict.update({variable:val})
         #print('class names are', clean_data_dict[variable+'_classes'])
         #num_cat=len(clean_data_dict[variable+'_classes'][0])

@@ -135,6 +135,7 @@ def pre_process(data,input_vars):
                 print('encoding list '+variable)
                 all_classes=[]
                 classes_array=cat_class_dict[variable]
+                print(classes_array)
                 for val in classes_array:
                     all_classes.append(val)
                 #print('data extracted',all_classes)
