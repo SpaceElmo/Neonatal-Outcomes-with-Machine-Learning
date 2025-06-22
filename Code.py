@@ -28,23 +28,32 @@ from supabase import create_client, Client
 import csv
 from datetime import datetime
 import pickle
-
+#BirthDateMother #EthnicityMother
 def csv_to_dict(file_path):
-    with open(file_path, newline='',mode='r') as file:
+    '''converts csv into a list of dicts with one dict for each contact'''
+    with open(file_path, newline='',mode='r',encoding="latin-1") as file:
         csv_reader = csv.DictReader(file,dialect='excel') 
         data = [row for row in csv_reader] 
         return data
 
 def parse_date(date_str):
-    formats = ["%d/%m/%Y %H:%M","%d-%b-%y"]
+    '''Converts dates in different formats'''
+    formats = ["%d/%m/%Y %H:%M","%d-%m-%y","%d/%m/%Y","%Y/%m/%d %H:%M"]
     for fmt in formats:
         #print(date_str,fmt)
         try:
             #print(datetime.strptime(date_str,fmt))
             return datetime.strptime(date_str,fmt)
         except:
-            print('Error in date found', date_str,fmt)
+            #print('Error in date found', date_str,fmt)
             continue
+
+def fix_dataset(filename,col_to_remove):
+    'remove a key from a dataset as csv and save'
+    df=pd.read_csv(filename)
+    df.drop(columns=[col_to_remove],inplace=True)
+    df.to_csv('../data/modified.csv',index=False)
+    
 
 
 def days_difference(date1, date2):
@@ -82,16 +91,19 @@ def convert_to_np(datasource,keyname):
 
 def convert_to_int(array):
     '''Missing vals are labelled 999'''
-    int_array = np.array([int(x) if x else 999 for x in array])
+    #print("int",array)
+    int_array = np.array([int(float(x)) if x else 999 for x in array])
     return int_array
 
 def convert_to_float(array):
     '''Missing vals are labelled 999'''
+    #print("float",array)
     float_array = np.array([float(x) if x else np.nan for x in array])
     return float_array
 
 def convert_to_str(array):
     '''Missing vals are labelled None'''
+    #print("str",array)
     str_array = np.array([str(x) if x else 'None' for x in array])
     str_array= np.char.replace(str_array, 'MS', 'M')
     str_array= np.char.replace(str_array, 'CH', 'C')
@@ -303,12 +315,14 @@ def main():
 
 
     today = datetime.today()
+    #fix_dataset('../data/Badger download.csv' ,"HRG2016_Unknown")
+    #print('Data fixed')
 
 
 
 
     #-------Variables------------------------------------------------------------------------------------------------
-    '''These are the variable I could see as relavent. Do not change order of variables'''
+    '''These are the variable I could see as relevent. Do not change order of variables'''
     variables=['BadgerUniqueID',
     'NationalIDBabyAnon',
     'EpisodeNumber',
@@ -373,7 +387,7 @@ def main():
     'NecrotisingEnterocolitis',
     'MaternalPyrexiaInLabour38c',
     'AdmitBloodGlucose',
-    'HIEGrade']
+    'HIEGrade','BirthDateMother', 'EthnicityMother']
 
     int_variables=[
     'EpisodeNumber',
@@ -396,7 +410,7 @@ def main():
     'SteroidsName','OffensiveLiquor',
     'CordClamping','SteroidsAntenatalGiven','AdmitPrincipalReason','BirthOrder']
 
-    time_variables=['BirthTimeBaby','AdmitTime','DischTime']
+    time_variables=['BirthTimeBaby','AdmitTime','DischTime','BirthDateMother']
 
     float_variables=['AdmitTemperature','BirthHeadCircumference','AdmitBloodGlucose','GestationWeeks',
                     'GestationDays','Birthweight','AdmitHeadCircumference','CordArterialpH','CordVenouspH']
@@ -408,9 +422,9 @@ def main():
 
     list_variables_str=['DrugsDuringStay']#had to add this as this is a list of strings not ints from a picklist. would put diagnosis in this cat
 
-    string_variables=['Sex','BadgerUniqueID','NationalIDBabyAnon','HeadScanFirstResult','HeadScanLastResult','MaritalStatusMother','BloodGroupMother','GPPostCode']
+    string_variables=['Sex','BadgerUniqueID','NationalIDBabyAnon','HeadScanFirstResult','HeadScanLastResult','MaritalStatusMother','BloodGroupMother','GPPostCode','EthnicityMother']
 
-    new_variables=['duration_of_stay','gestation_days']
+    new_variables=['duration_of_stay','gestation_days','mat_age']
 
     orig_input_variables_cat=['EpisodeNumber',#these are the variables used for the poster but they contain paameters that can only be known at discharge. 
     'Readmission',
@@ -454,11 +468,11 @@ def main():
     'SteroidsName','OffensiveLiquor',
     'CordClamping','SteroidsAntenatalGiven','AdmitPrincipalReason','BirthOrder','ProblemsPregnancyMother',
     'ProblemsMedicalMother','Resuscitation','DrugsAbusedMother','DrugsInLabour','LabourPresentation',
-    'Sex','MaritalStatusMother','BloodGroupMother','GPPostCode']
+    'Sex','MaritalStatusMother','BloodGroupMother','GPPostCode', 'EthnicityMother']
 
     new_input_variables_cont=['AdmitTemperature','BirthHeadCircumference','AdmitBloodGlucose',
     'gestation_days','Birthweight','AdmitHeadCircumference','CordArterialpH','CordVenouspH','MembranerupturedDuration','CordClampingTimeSecond',
-    'CordClampingTimeMinute','ICCareDays2011']#,'HDCareDays2011','SCCareDays2011','NormalCareDays2011'
+    'CordClampingTimeMinute','ICCareDays2011','mat_age']#,'HDCareDays2011','SCCareDays2011','NormalCareDays2011'
 
     orig=0#set to 1 if you want the input vars used in teh bapm paper
 
@@ -477,11 +491,11 @@ def main():
 
     #Executables---------------------------------------------------------------------------------
     '''Get the file'''
-    file_path = '../data/Badger download.csv' 
+    file_path = 'D:\\Work\\NOML\\data\\NNUEpisodeSummarysince_2010.csv'
     print('getting file and converting to dict')
     data= csv_to_dict(file_path) #create a list of dicts of all episodes. May contain multiple copies of baby. 
+    #print(data)
     remainder=set()
-    all_keys=data[0].keys
     for key in data[0].keys():
         if key in variables:
             continue
@@ -581,12 +595,16 @@ def main():
         data_dict.update({keyname:vals})
     #print(data_dict['GestationWeeks'])    
 
+    #for i,val in enumerate(data_dict['NationalIDBabyAnon']):
+      # if val=='D12285FD8B8B14E3C5C7D52BC255E3CFD898EA18':
+     #      print('This is dat item..................................',data_dict['BirthDateMother'][i])
+
     '''Now clean the data -Convert gestation to days val. Get the discharge time. Convert to ints or floats or lists where appropriate. Replace missing vals. '''
 
     print('Cleaning data')
     clean_data_dict={}
     for variable in int_variables:
-        #print(variable)
+        print(variable)
         int_vals=convert_to_int(data_dict[variable])
         clean_data_dict.update({variable:int_vals})
     for variable in float_variables+float_variables_zero:
@@ -612,6 +630,20 @@ def main():
         duration_list.append(duration)
     clean_duration=convert_to_float(duration_list)    
     clean_data_dict.update({'duration_of_stay':clean_duration})
+    
+    #Calculate maternale age at birth
+    mat_age_list=[]
+    for i,time in enumerate(data_dict['BirthDateMother']):
+        if data_dict['BirthDateMother'][i]:
+            #print(data_dict['NationalIDBabyAnon'][i])
+            duration=days_difference(time,data_dict['BirthTimeBaby'][i])#
+            mat_age_list.append(duration/365.25)#age in years
+            #print(duration)
+        else:
+            duration=0
+            mat_age_list.append(duration/365.25)   
+        clean_duration=convert_to_float(mat_age_list)    
+        clean_data_dict.update({'mat_age':clean_duration})
 
     #print(clean_data_dict['duration_of_stay'])
     gestation_days=clean_data_dict['GestationWeeks']*7+clean_data_dict['GestationDays']
@@ -639,7 +671,7 @@ def main():
     for variable in int_variables+string_variables:
         print('encoding '+variable)
         encoded_array=encode_int(clean_data_dict[variable],verbose=verbose)
-        #print(encoded_array[0],'classes',encoded_array[1])
+        print(encoded_array[0],'classes',encoded_array[1])
         clean_data_dict.update({'encoded_'+variable:encoded_array[0]})
         clean_data_dict.update({'encoded_'+variable+'_classes':encoded_array[1]})  
 
@@ -707,10 +739,10 @@ def main():
         #for _ in range(num_cat):
         #    full_var_list.append(variable)
     print('length of the input var list labels',len(full_var_list))
-    print('The list is',full_var_list)
+    #print('The list is',full_var_list)
     
     '''save clean dict locally as a json so that predict code can access it.'''
-    with open("../data/clean_data_dict.pkl","wb") as file:
+    with open(r"D:\Work\NOML\data\clean_data_dict.pkl","wb") as file:
         pickle.dump(clean_data_dict,file) 
 
 
@@ -952,8 +984,8 @@ def main():
         #plt.ylim(0,300)
         #plt.tight_layout(pad=0.2)
         #plt.legend(fontsize='x-small',labelspacing=0.2,columnspacing=1)
-        plt.savefig('../plots/model_plot_'+mod_type+'.png',dpi=1200)
         plt.show() 
+        plt.savefig(r'D:\Work\NOML\plots\model_plot_'+mod_type+'.png',dpi=1200)
 
 if __name__ == "__main__":
     main()
