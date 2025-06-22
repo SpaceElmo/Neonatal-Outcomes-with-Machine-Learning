@@ -125,7 +125,7 @@ def pre_process(data,input_vars):
     #open the clean data dict json to access the classes. 
     # This prevents a dimension mismatch between the predict input and model
 
-    with open("../data/clean_data_dict.pkl","rb") as file:
+    with open(r"D:\Work\NOML\data\clean_data_dict.pkl","rb") as file:
         clean_data_dict=pickle.load(file)
 
     
@@ -239,6 +239,7 @@ def predict_dates(y_predict,data):
     return(new_dates_str,data['NationalIDBabyAnon'])
 
 #-------Variables------------------------------------------------------------------------------------------------
+#'''These are the variable I could see as relevent. Do not change order of variables'''
 variables=['BadgerUniqueID',
 'NationalIDBabyAnon',
 'EpisodeNumber',
@@ -303,7 +304,7 @@ variables=['BadgerUniqueID',
 'NecrotisingEnterocolitis',
 'MaternalPyrexiaInLabour38c',
 'AdmitBloodGlucose',
-'HIEGrade']
+'HIEGrade','BirthDateMother', 'EthnicityMother']
 
 int_variables=[
 'EpisodeNumber',
@@ -326,10 +327,10 @@ int_variables=[
 'SteroidsName','OffensiveLiquor',
 'CordClamping','SteroidsAntenatalGiven','AdmitPrincipalReason','BirthOrder']
 
-time_variables=['BirthTimeBaby','AdmitTime','DischTime']
+time_variables=['BirthTimeBaby','AdmitTime','DischTime','BirthDateMother']
 
 float_variables=['AdmitTemperature','BirthHeadCircumference','AdmitBloodGlucose','GestationWeeks',
-                 'GestationDays','Birthweight','AdmitHeadCircumference','CordArterialpH','CordVenouspH']
+                'GestationDays','Birthweight','AdmitHeadCircumference','CordArterialpH','CordVenouspH']
 
 float_variables_zero=['VentilationDays','CPAPDays','ICCareDays2011','HDCareDays2011','SCCareDays2011','NormalCareDays2011','MembranerupturedDuration','OxygenDays','CordClampingTimeSecond',
 'CordClampingTimeMinute','ParenteralNutritionDays']
@@ -338,9 +339,9 @@ list_variables=['ProblemsPregnancyMother','ProblemsMedicalMother','Resuscitation
 
 list_variables_str=['DrugsDuringStay']#had to add this as this is a list of strings not ints from a picklist. would put diagnosis in this cat
 
-string_variables=['Sex','BadgerUniqueID','NationalIDBabyAnon','HeadScanFirstResult','HeadScanLastResult','MaritalStatusMother','BloodGroupMother','GPPostCode']
+string_variables=['Sex','BadgerUniqueID','NationalIDBabyAnon','HeadScanFirstResult','HeadScanLastResult','MaritalStatusMother','BloodGroupMother','GPPostCode','EthnicityMother']
 
-new_variables=['duration_of_stay','gestation_days']
+new_variables=['duration_of_stay','gestation_days','mat_age']
 
 orig_input_variables_cat=['EpisodeNumber',#these are the variables used for the poster but they contain paameters that can only be known at discharge. 
 'Readmission',
@@ -368,7 +369,7 @@ orig_input_variables_cont=['AdmitTemperature','BirthHeadCircumference','AdmitBlo
 'gestation_days','Birthweight','AdmitHeadCircumference','CordArterialpH','CordVenouspH','VentilationDays','CPAPDays','MembranerupturedDuration','OxygenDays','CordClampingTimeSecond',
 'CordClampingTimeMinute','ParenteralNutritionDays','ICCareDays2011']#,'HDCareDays2011','SCCareDays2011','NormalCareDays2011'
 
-new_input_variables_cat=['EpisodeNumber',#can adjust these if needed, Currently adjusted so all are nown at birth other than ICC days. These must match teh model
+new_input_variables_cat=['EpisodeNumber',#can adjust these if needed
 'Readmission',
 'BirthOrder',
 'ResusSurfactant',
@@ -384,11 +385,11 @@ new_input_variables_cat=['EpisodeNumber',#can adjust these if needed, Currently 
 'SteroidsName','OffensiveLiquor',
 'CordClamping','SteroidsAntenatalGiven','AdmitPrincipalReason','BirthOrder','ProblemsPregnancyMother',
 'ProblemsMedicalMother','Resuscitation','DrugsAbusedMother','DrugsInLabour','LabourPresentation',
-'Sex','MaritalStatusMother','BloodGroupMother','GPPostCode']
+'Sex','MaritalStatusMother','BloodGroupMother','GPPostCode', 'EthnicityMother']
 
 new_input_variables_cont=['AdmitTemperature','BirthHeadCircumference','AdmitBloodGlucose',
 'gestation_days','Birthweight','AdmitHeadCircumference','CordArterialpH','CordVenouspH','MembranerupturedDuration','CordClampingTimeSecond',
-'CordClampingTimeMinute','ICCareDays2011']#,'HDCareDays2011','SCCareDays2011','NormalCareDays2011'
+'CordClampingTimeMinute','ICCareDays2011','mat_age']#,'HDCareDays2011','SCCareDays2011','NormalCareDays2011'
 
 verbose=False
 
@@ -403,8 +404,10 @@ def main():
     #st.write("The continuous variables required are")  
     #for var in new_input_variables_cont:
     #     st.write(var)
-    st.write('Birthdate and Anonymous ID is also required')
+    st.write('Include all variables from a Badger download EXCEPT patient identifiable data')
     st.write('Only 27+0 to 35+6 week gestation babies can be considered')
+    st.write('Please test initially with one case at a time. Email any issues to me at (raman.sharma1@nhs.net)')
+    st.write('The raw code is available to fork at (https://github.com/SpaceElmo/Neonatal-Outcomes-by-Machine-Learning) ')
     csv_input = st.file_uploader("Upload your csv here",type='csv')
     if csv_input:
         data=read_input(csv_input)
