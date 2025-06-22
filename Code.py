@@ -726,24 +726,23 @@ def main():
     y=np.append(y,clean_data_dict[output_variables[0]])    
     print('X shape',X.shape)
     print('y shape',y.shape)
-    full_var_list=[]#label the columns in the input array with teh appropriate category for later analysis. cat names are repeated if the encoding is in the same cat
-    for variable in (input_variables_cont):
-        full_var_list.append(variable)
+    full_class_dict={}#label the columns in the input array with teh appropriate category for later analysis. cat names are repeated if the encoding is in the same cat
+    #for variable in (input_variables_cont):
+    #    full_var_list.update({variable:variable})
     for variable in (input_variables_cat):
         print(variable)
         for category in clean_data_dict[variable+'_classes']:
             for val in category:
-                full_var_list.append(val)
+                full_class_dict.update({variable:val})
         #print('class names are', clean_data_dict[variable+'_classes'])
         #num_cat=len(clean_data_dict[variable+'_classes'][0])
         #for _ in range(num_cat):
         #    full_var_list.append(variable)
-    print('length of the input var list labels',len(full_var_list))
-    #print('The list is',full_var_list)
     
     '''save clean dict locally as a json so that predict code can access it.'''
-    with open(r"D:\Work\NOML\code\clean_data_dict.pkl","wb") as file:
-        pickle.dump(clean_data_dict,file) 
+    print('Saving pickle')
+    with open("D:\\Work\\NOML\\code\\class_dict.pkl","wb") as file:
+        pickle.dump(full_class_dict,file)
 
 
 
@@ -800,12 +799,12 @@ def main():
         print('max importance idx',max_importance_idx)
 
         sorted_idx=np.argsort(r['importances_mean'])
-
-        print('The most important variable is ',full_var_list[max_importance_idx])
+        key,val=list(full_class_dict.items())[max_importance_idx]
+        print('The most important variable is ',key)
         for i,idx in enumerate(sorted_idx[:-10-1:-1]):#get the largest values in the arg sort
             #idx=sorted_idx[i]
             #print(idx)
-            print(f"The {i} most important variable is {full_var_list[idx]} with a mean of {r['importances_mean'][idx]} and sd {r['importances_std'][idx]}")
+            print(f"The {i} most important variable is {key} with a mean of {r['importances_mean'][idx]} and sd {r['importances_std'][idx]}")
             #with open('rf_result.txt') as file:
             #    file.write('The'+ str(i) +'most important variable is '+full_var_list[idx] +'with a mean of '+str(r['importances_mean'][idx])+' and sd '+str(r['importances_std'][idx])+'\n')
         
@@ -918,12 +917,12 @@ def main():
         print('max importance idx',max_importance_idx)
 
         sorted_idx=np.argsort(r['importances_mean'])
-
-        print('The most important variable is ',full_var_list[max_importance_idx])
+        key,val=list(full_class_dict.items())[max_importance_idx]
+        print('The most important variable is ',key)
         for i,idx in enumerate(sorted_idx[:-10-1:-1]):#get the largest values in the arg sort
             #idx=sorted_idx[i]
             #print(idx)
-            print(f"The {i} most important variable is {full_var_list[idx]} with a mean of {r['importances_mean'][idx]} and sd {r['importances_std'][idx]}")
+            print(f"The {i} most important variable is {key} with a mean of {r['importances_mean'][idx]} and sd {r['importances_std'][idx]}")
             #with open('hist_result.txt', 'w') as file:
             # file.write('The'+ str(i) +'most important variable is '+full_var_list[idx] +'with a mean of '+str(r['importances_mean'][idx])+' and sd '+str(r['importances_std'][idx])+'\n')
 

@@ -125,8 +125,8 @@ def pre_process(data,input_vars):
     #open the clean data dict json to access the classes. 
     # This prevents a dimension mismatch between the predict input and model
 
-    with open(r"D:\Work\NOML\code\clean_data_dict.pkl","rb") as file:
-        clean_data_dict=pickle.load(file)
+    with open("class_dict.pkl","rb") as file:
+        cat_class_dict=pickle.load(file)
 
     
     for variable in list_variables+list_variables_str:
@@ -134,7 +134,7 @@ def pre_process(data,input_vars):
             if variable==var:
                 print('encoding list '+variable)
                 all_classes=[]
-                classes_array=clean_data_dict['encoded_'+variable+'_classes'][0]
+                classes_array=cat_class_dict[variable]
                 for val in classes_array:
                     all_classes.append(val)
                 #print('data extracted',all_classes)
@@ -154,7 +154,7 @@ def pre_process(data,input_vars):
                 print('encoding int or str '+variable)
                 #print(data[variable])
                 all_classes=[]
-                classes_array=clean_data_dict['encoded_'+variable+'_classes'][0]
+                classes_array=cat_class_dict[variable]
                 for val in classes_array:
                     all_classes.append(val)
                 #print('data extracted',all_classes)
