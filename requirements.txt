@@ -81,7 +81,7 @@ seaborn==0.13.2
 #st-supabase-connection==2.0.0
 #storage3==0.9.0
 #streamlit==1.36.0
-#supabase==2.10.0
+supabase==2.10.0
 #supafunc==0.7.0
 #sympy==1.13.1
 #tables==3.10.1
