@@ -128,13 +128,13 @@ def pre_process(data,input_vars):
     with open("class_dict.pkl","rb") as file:
         cat_class_dict=pickle.load(file)
 
-    
+    print(cat_class_dict)
     for variable in list_variables+list_variables_str:
         for var in input_vars:
             if variable==var:
                 print('encoding list '+variable)
                 all_classes=[]
-                classes_array=cat_class_dict[variable]
+                classes_array=cat_class_dict["encoded_"+variable]
                 print(classes_array)
                 for val in classes_array:
                     all_classes.append(val)
