@@ -110,6 +110,20 @@ def clean_data(data,input_vars):# This way should be agnostic of which vars are 
         Birthtime_list.append(time)    
     clean_data_dict.update({'Birth_time':Birthtime_list})
 
+     #Calculate maternale age at birth
+    mat_age_list=[]
+    for i,time in enumerate(data_dict['BirthDateMother']):
+        if data_dict['BirthDateMother'][i]:
+            #print(data_dict['NationalIDBabyAnon'][i])
+            duration=noml.days_difference(time,data_dict['BirthTimeBaby'][i])#
+            mat_age_list.append(duration/365.25)#age in years
+            #print(duration)
+        else:
+            duration=0
+            mat_age_list.append(duration/365.25)   
+    clean_duration=noml.convert_to_float(mat_age_list)    
+    clean_data_dict.update({'mat_age':clean_duration})
+
     #print(clean_data_dict['duration_of_stay'])
     gestation_days=clean_data_dict['GestationWeeks']*7+clean_data_dict['GestationDays']
     clean_array=noml.convert_to_float(gestation_days)
@@ -129,9 +143,9 @@ def pre_process(data,input_vars):
         cat_class_dict=pickle.load(file)
 
     print(cat_class_dict)
-    for variable in list_variables+list_variables_str:
+    for variable in new_input_variables_cat:
         for var in input_vars:
-            if variable==var:
+            if variable==var and var in list_variables+list_variables_str:
                 print('encoding list '+variable)
                 all_classes=[]
                 classes_array=cat_class_dict["encoded_"+variable]
@@ -145,17 +159,17 @@ def pre_process(data,input_vars):
                 #print(encoded_array[0],'classes',encoded_array[1])
                 data.update({'encoded_'+variable:encoded_array})#get the values
                 #data.update({'encoded_'+variable+'_classes':encoded_array[1]})#get the one hot encoded categories too
-    for variable in int_variables+string_variables:
+    for variable in new_input_variables_cat:
         for var in input_vars:
             if var=='BadgerUniqueID':#need to exclude these from encoding
                 continue
             if var=='NationalIDBabyAnon':
                 continue
-            if variable==var:
+            if variable==var and var in int_variables+string_variables:
                 print('encoding int or str '+variable)
                 #print(data[variable])
                 all_classes=[]
-                classes_array=cat_class_dict[variable]
+                classes_array=cat_class_dict["encoded_"+variable]
                 for val in classes_array:
                     all_classes.append(val)
                 #print('data extracted',all_classes)
@@ -168,7 +182,7 @@ def pre_process(data,input_vars):
                 data.update({'encoded_'+variable:encoded_array[0]})
                 #data.update({'encoded_'+variable+'_classes':encoded_array[1]})  
 
-    for variable in float_variables+new_variables:#replace missing values in floats with median
+    for variable in new_input_variables_cont:#replace missing values in floats with median
         for var in input_vars:
             if variable==var:
                 print('replacing missing vals in '+variable)
@@ -417,7 +431,7 @@ def main():
             st.error('No valid cases were identified. Please retry')
         else:
             input_vars=data[0].keys()
-            st.write('The input variables are being processed')
+            st.write('The input variables are being processed')#,input_vars)
             cleaned_data=clean_data(data,input_vars)
             processed_data=pre_process(cleaned_data,input_vars)
             X=make_input_array(processed_data)

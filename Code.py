@@ -733,14 +733,13 @@ def main():
     for variable in (input_variables_cat):
         print(variable)
         for category in clean_data_dict[variable+'_classes']:
-            for val in category:
-                print(variable,": ",val)
-                full_class_dict.update({variable:val})
+            print(variable,": ",category)
+            full_class_dict.update({variable:category})
         #print('class names are', clean_data_dict[variable+'_classes'])
         #num_cat=len(clean_data_dict[variable+'_classes'][0])
         #for _ in range(num_cat):
         #    full_var_list.append(variable)
-    
+    print('classes dict to pickle',full_class_dict)
     '''save clean dict locally as a json so that predict code can access it.'''
     print('Saving pickle')
     with open("D:\\Work\\NOML\\code\\class_dict.pkl","wb") as file:
