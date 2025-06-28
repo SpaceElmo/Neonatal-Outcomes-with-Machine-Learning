@@ -22,7 +22,9 @@ import pickle
 #======Functions===========================================================================
 def read_input(csv_file):
     '''Reads the uploaded csv file and converts to a dict list and then applies the exclusion criteria. returns the list of dicts'''
-    file_contents=StringIO(csv_file.getvalue().decode("utf-8"))
+    file_bytes=csv_file.read()
+    decoded_file=file_bytes.decode('latin-1')
+    file_contents=StringIO(decoded_file,newline='')
        
     csv_reader = csv.DictReader(file_contents,dialect='excel') 
     data = [row for row in csv_reader] 
@@ -426,6 +428,7 @@ def main():
     csv_input = st.file_uploader("Upload your csv here",type='csv')
     if csv_input:
         data=read_input(csv_input)
+        st.write('data extracted', data)
         st.write(len(data[0]))
         if len(data[0])==0:
             st.error('No valid cases were identified. Please retry')
