@@ -428,9 +428,11 @@ def main():
     csv_input = st.file_uploader("Upload your csv here",type='csv')
     if csv_input:
         data=read_input(csv_input)
-        st.write('data extracted', data)
-        st.write(len(data[0]))
-        if len(data[0])==0:
+        st.write('data extracted succesfully')
+        if len(data)==0:
+            st.write('No valid cases found - please check gestation of case')
+        st.write('Length of input data is ',len(data))
+        if len(data)==0:
             st.error('No valid cases were identified. Please retry')
         else:
             input_vars=data[0].keys()
